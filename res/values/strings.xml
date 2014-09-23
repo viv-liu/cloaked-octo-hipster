@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Foodstorm</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <color name="msft_red">#F02401</color>
+    <color name="msft_green">#77BC00</color>
+    <color name="msft_blue">#219DFD</color>
+    <color name="msft_orange">#FFB700</color>
+
+</resources>
