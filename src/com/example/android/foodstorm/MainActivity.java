@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.example.android.effectivenavigation;
+package com.example.android.foodstorm;
+
+import com.example.android.effectivenavigation.R;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -27,7 +29,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -146,15 +147,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * A fragment that launches other parts of the demo application.
      */
     public static class FridgeFragment extends Fragment {
-    	static fridgeListItem[] fridgeItems; 
+    	static FridgeFoodItem[] fridgeList; 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
         	// For testing, hardcode some list items
-        	fridgeItems = new fridgeListItem[3];
-        	fridgeItems[0] = new fridgeListItem("TestCabbage", R.drawable.chef_hat);
-        	fridgeItems[1] = new fridgeListItem("TestCarrot", R.drawable.chef_hat);
-        	fridgeItems[2] = new fridgeListItem("TestCupcake", R.drawable.cupcake);
+        	fridgeList = new FridgeFoodItem[6];
+        	fridgeList[0] = new FridgeFoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat);
+        	fridgeList[1] = new FridgeFoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat);
+        	fridgeList[2] = new FridgeFoodItem("TestCabbage", FoodGroup.PRODUCE, R.drawable.chef_hat);
+        	fridgeList[3] = new FridgeFoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat);
+        	fridgeList[4] = new FridgeFoodItem("TestCupcake", FoodGroup.PROTEIN, R.drawable.chef_hat);
+        	fridgeList[5] = new FridgeFoodItem("TestTornadoChicken", FoodGroup.PROTEIN, R.drawable.chef_hat);
         	
             View rootView = inflater.inflate(R.layout.fragment_section_fridge, container, false);
             return rootView;
@@ -162,8 +166,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         
         public void onStart() {
         	super.onStart();
-        	ListView fridgeList = (ListView)getActivity().findViewById(R.id.fridgeListView);
-            fridgeList.setAdapter(new FridgeItemAdapter(getActivity(), fridgeItems));
+        	ListView lv_produce = (ListView)getActivity().findViewById(R.id.lv_fridge);
+            lv_produce.setAdapter(new FridgeItemAdapter(getActivity(), fridgeList));
         }
         
     }
