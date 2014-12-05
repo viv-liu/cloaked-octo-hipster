@@ -30,7 +30,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -178,15 +181,35 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public static class RecipesFragment extends Fragment {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
+        
+        private GridView cards;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_recipes, container, false);
             Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+            cards = (GridView) rootView.findViewById(R.id.recipes_cards_grid);
+            cards.setAdapter(createAdapter());
             return rootView;
+        }
+        
+        private RecipeCardAdapter createAdapter() {
+        	ArrayList<RecipeItem> titles = new ArrayList<RecipeItem>();
+        	
+        	titles.add(0, new RecipeItem("Rice and Beef",
+        			"Awesome food inspired by Microsoft cafeterias and good code",
+        			R.drawable.rice_and_chopsticks));
+        	titles.add(0, new RecipeItem("Burnt Dumplings", 
+        			"Chester demonstrates how not to cook. Make sure you're alone first",
+        			R.drawable.burnt_dumplings));
+        	titles.add(2, new RecipeItem("Fried Fish",
+        			"Sometimes appears in Asian supermarkets and Korean restuarants",
+        			R.drawable.friedfish));
+        	titles.add(3, new RecipeItem("Ridiculous Omelet", 
+        			"Inspires ragequitting and fruitless yelling. Reduces difficulty of all other recipes",
+        			R.drawable.flipped_chef_hat));
+        	return new RecipeCardAdapter(getActivity(), titles);
         }
     }
 }

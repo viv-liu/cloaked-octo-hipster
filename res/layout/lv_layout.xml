@@ -1,6 +1,9 @@
 <!-- WARNING: MEDDLING WITH THIS FILE IS LIKE PLAYING WITH FIRE.
 	VIVIAN ONCE SPENT 1 HR FIGURING OUT WHY FOODS WEREN'T SHOWING IN LIST,
 	GAVE UP, COPY & PASTED THIS FROM LISTTEST PROJECT, AND BAM IT WORKED. -->
+	
+<!-- Chester says.....I was trying to figure out what was going on here. 
+     I give up xD -->
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
