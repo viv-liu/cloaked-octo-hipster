@@ -56,45 +56,48 @@ public final class R {
         public static final int flipped_chef_hat=0x7f02000f;
         public static final int fridge_main=0x7f020010;
         public static final int friedfish=0x7f020011;
-        public static final int ic_details=0x7f020012;
-        public static final int ic_launcher=0x7f020013;
-        public static final int list_focused_example=0x7f020014;
-        public static final int list_pressed_example=0x7f020015;
-        public static final int menu_dropdown_panel_example=0x7f020016;
-        public static final int progress_bg_example=0x7f020017;
-        public static final int progress_horizontal_example=0x7f020018;
-        public static final int progress_primary_example=0x7f020019;
-        public static final int progress_secondary_example=0x7f02001a;
-        public static final int rice_and_chopsticks=0x7f02001b;
-        public static final int rounded_corners_background=0x7f02001c;
-        public static final int selectable_background_example=0x7f02001d;
-        public static final int spinner_ab_default_example=0x7f02001e;
-        public static final int spinner_ab_disabled_example=0x7f02001f;
-        public static final int spinner_ab_focused_example=0x7f020020;
-        public static final int spinner_ab_pressed_example=0x7f020021;
-        public static final int spinner_background_ab_example=0x7f020022;
-        public static final int tab_indicator_ab_example=0x7f020023;
-        public static final int tab_selected_example=0x7f020024;
-        public static final int tab_selected_focused_example=0x7f020025;
-        public static final int tab_selected_pressed_example=0x7f020026;
-        public static final int tab_unselected_example=0x7f020027;
-        public static final int tab_unselected_focused_example=0x7f020028;
-        public static final int tab_unselected_pressed_example=0x7f020029;
+        public static final int ic_action_search=0x7f020012;
+        public static final int ic_details=0x7f020013;
+        public static final int ic_launcher=0x7f020014;
+        public static final int list_focused_example=0x7f020015;
+        public static final int list_pressed_example=0x7f020016;
+        public static final int menu_dropdown_panel_example=0x7f020017;
+        public static final int progress_bg_example=0x7f020018;
+        public static final int progress_horizontal_example=0x7f020019;
+        public static final int progress_primary_example=0x7f02001a;
+        public static final int progress_secondary_example=0x7f02001b;
+        public static final int rice_and_chopsticks=0x7f02001c;
+        public static final int rounded_corners_background=0x7f02001d;
+        public static final int selectable_background_example=0x7f02001e;
+        public static final int spinner_ab_default_example=0x7f02001f;
+        public static final int spinner_ab_disabled_example=0x7f020020;
+        public static final int spinner_ab_focused_example=0x7f020021;
+        public static final int spinner_ab_pressed_example=0x7f020022;
+        public static final int spinner_background_ab_example=0x7f020023;
+        public static final int tab_indicator_ab_example=0x7f020024;
+        public static final int tab_selected_example=0x7f020025;
+        public static final int tab_selected_focused_example=0x7f020026;
+        public static final int tab_selected_pressed_example=0x7f020027;
+        public static final int tab_unselected_example=0x7f020028;
+        public static final int tab_unselected_focused_example=0x7f020029;
+        public static final int tab_unselected_pressed_example=0x7f02002a;
     }
     public static final class id {
-        public static final int button=0x7f080005;
-        public static final int item_separator=0x7f080003;
-        public static final int lv_fridge=0x7f080001;
-        public static final int lv_item_header=0x7f080008;
-        public static final int lv_item_icon=0x7f080007;
-        public static final int lv_item_subtext=0x7f080009;
-        public static final int lv_list_hdr=0x7f080004;
-        public static final int pager=0x7f080000;
-        public static final int recipe_card_description=0x7f08000c;
-        public static final int recipe_card_image=0x7f08000a;
-        public static final int recipe_card_title=0x7f08000b;
-        public static final int recipes_cards_grid=0x7f080002;
-        public static final int vertical_divider=0x7f080006;
+        public static final int action_search=0x7f09000e;
+        public static final int action_settings=0x7f09000d;
+        public static final int button=0x7f090005;
+        public static final int item_separator=0x7f090003;
+        public static final int lv_fridge=0x7f090001;
+        public static final int lv_item_header=0x7f090008;
+        public static final int lv_item_icon=0x7f090007;
+        public static final int lv_item_subtext=0x7f090009;
+        public static final int lv_list_hdr=0x7f090004;
+        public static final int pager=0x7f090000;
+        public static final int recipe_card_description=0x7f09000c;
+        public static final int recipe_card_image=0x7f09000a;
+        public static final int recipe_card_title=0x7f09000b;
+        public static final int recipes_cards_grid=0x7f090002;
+        public static final int vertical_divider=0x7f090006;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -104,7 +107,12 @@ public final class R {
         public static final int lv_layout=0x7f030004;
         public static final int recipe_card_layout=0x7f030005;
     }
+    public static final class menu {
+        public static final int main_activity_actions=0x7f080000;
+    }
     public static final class string {
+        public static final int action_search=0x7f060003;
+        public static final int action_settings=0x7f060004;
         public static final int app_name=0x7f060000;
         public static final int cd=0x7f060002;
         public static final int dummy_section_text=0x7f060001;

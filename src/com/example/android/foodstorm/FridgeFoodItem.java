@@ -9,9 +9,11 @@ public class FridgeFoodItem {
 	public String name;
 	public FoodGroup foodGroup;
 	public int icon;
-	public FridgeFoodItem(String n, FoodGroup fg, int i){
+	public boolean isHeader;
+	public FridgeFoodItem(String n, FoodGroup fg, int i, boolean h){
 		name = n;
 		foodGroup = fg;
 		icon = i;
+		isHeader = h;
 	}
 }
