@@ -82,19 +82,20 @@ public final class R {
         public static final int tab_unselected_pressed_example=0x7f020029;
     }
     public static final class id {
-        public static final int button=0x7f080005;
-        public static final int item_separator=0x7f080003;
+        public static final int button=0x7f080006;
+        public static final int item_separator=0x7f080004;
         public static final int lv_fridge=0x7f080001;
-        public static final int lv_item_header=0x7f080008;
-        public static final int lv_item_icon=0x7f080007;
-        public static final int lv_item_subtext=0x7f080009;
-        public static final int lv_list_hdr=0x7f080004;
+        public static final int lv_item_header=0x7f080009;
+        public static final int lv_item_icon=0x7f080008;
+        public static final int lv_item_subtext=0x7f08000a;
+        public static final int lv_list_hdr=0x7f080005;
         public static final int pager=0x7f080000;
-        public static final int recipe_card_description=0x7f08000c;
-        public static final int recipe_card_image=0x7f08000a;
-        public static final int recipe_card_title=0x7f08000b;
-        public static final int recipes_cards_grid=0x7f080002;
-        public static final int vertical_divider=0x7f080006;
+        public static final int recipe_card_description=0x7f08000d;
+        public static final int recipe_card_image=0x7f08000b;
+        public static final int recipe_card_title=0x7f08000c;
+        public static final int recipes_list_left=0x7f080002;
+        public static final int recipes_list_right=0x7f080003;
+        public static final int vertical_divider=0x7f080007;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
