@@ -20,6 +20,8 @@ import com.example.android.effectivenavigation.R;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,11 +29,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.SearchView;
 
 import java.util.ArrayList;
 
@@ -92,6 +96,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         .setIcon(R.drawable.chef_hat)
                         .setTabListener(this));
     }
+    
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }*/
+    
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -151,28 +164,61 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      */
     public static class FridgeFragment extends Fragment {
     	static FridgeFoodItem[] fridgeList; 
+    	private FridgeItemAdapter adapter;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+        	setHasOptionsMenu(true);
         	// For testing, hardcode some list items
         	fridgeList = new FridgeFoodItem[6];
-        	fridgeList[0] = new FridgeFoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat);
-        	fridgeList[1] = new FridgeFoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat);
-        	fridgeList[2] = new FridgeFoodItem("TestCabbage", FoodGroup.PRODUCE, R.drawable.chef_hat);
-        	fridgeList[3] = new FridgeFoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat);
-        	fridgeList[4] = new FridgeFoodItem("TestCupcake", FoodGroup.PROTEIN, R.drawable.chef_hat);
-        	fridgeList[5] = new FridgeFoodItem("TestTornadoChicken", FoodGroup.PROTEIN, R.drawable.chef_hat);
+        	fridgeList[0] = new FridgeFoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true);
+        	fridgeList[1] = new FridgeFoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat, false);
+        	fridgeList[2] = new FridgeFoodItem("TestCabbage", FoodGroup.PRODUCE, R.drawable.chef_hat, false);
+        	fridgeList[3] = new FridgeFoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true);
+        	fridgeList[4] = new FridgeFoodItem("TestCupcake", FoodGroup.PROTEIN, R.drawable.chef_hat, false);
+        	fridgeList[5] = new FridgeFoodItem("TestTornadoChicken", FoodGroup.PROTEIN, R.drawable.chef_hat, false);
         	
+        	adapter = new FridgeItemAdapter(getActivity(), fridgeList);
             View rootView = inflater.inflate(R.layout.fragment_section_fridge, container, false);
             return rootView;
         }
-        
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            inflater.inflate(R.menu.main_activity_actions, menu);
+
+    		 SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+    	        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+    	            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+    	            searchView.setIconifiedByDefault(true);   
+
+    	        SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() 
+    	        {
+    	            @Override
+    	            public boolean onQueryTextChange(String newText) 
+    	            {
+    	                // this is your adapter that will be filtered
+    	                adapter.getFilter().filter(newText);
+    	                System.out.println("on text chnge text: "+newText);
+    	                return true;
+    	            }
+    	            @Override
+    	            public boolean onQueryTextSubmit(String query) 
+    	            {
+    	                // this is your adapter that will be filtered
+    	                adapter.getFilter().filter(query);
+    	                System.out.println("on query submit: "+query);
+    	                return true;
+    	            }
+    	        };
+    	        searchView.setOnQueryTextListener(textChangeListener);
+        }
         public void onStart() {
         	super.onStart();
         	ListView lv_produce = (ListView)getActivity().findViewById(R.id.lv_fridge);
-            lv_produce.setAdapter(new FridgeItemAdapter(getActivity(), fridgeList));
+            lv_produce.setAdapter(adapter);
+            lv_produce.setTextFilterEnabled(true); // for search filtering
         }
-        
     }
 
     /**

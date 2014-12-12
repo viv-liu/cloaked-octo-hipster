@@ -15,4 +15,8 @@ public enum FoodGroup {
     public String toString() {
         return stringValue;
     }
+    
+    public int toInt() {
+    	return intValue;
+    }
 }
