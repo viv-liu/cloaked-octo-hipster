@@ -31,10 +31,11 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.GridView;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
@@ -229,20 +230,73 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public static final String ARG_SECTION_NUMBER = "section_number";
         
         //private GridView cards;
-        private ListView left_list, right_list;
+        private ListView leftList, rightList;
+        
+        // Vars to help with linked scrolling
+        int offset = 0;
+        View clickSource, touchSource;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_recipes, container, false);
-            Bundle args = getArguments();
+            //Bundle args = getArguments();
             //cards = (GridView) rootView.findViewById(R.id.recipes_cards_grid);
             //cards.setAdapter(createAdapter());
-            left_list = (ListView) rootView.findViewById(R.id.recipes_list_left);
-            right_list = (ListView) rootView.findViewById(R.id.recipes_list_right);
-            left_list.setAdapter(createAdapterLeft());
-            right_list.setAdapter(createAdapterRight());
+            leftList = (ListView) rootView.findViewById(R.id.recipes_list_left);
+            rightList = (ListView) rootView.findViewById(R.id.recipes_list_right);
+            
+            // handling the linked scrolling
+            LinkedTouchListener leftLinkedTouchListener = new LinkedTouchListener();
+            leftLinkedTouchListener.otherListView = rightList;
+            leftList.setOnTouchListener(leftLinkedTouchListener);
+            
+            LinkedTouchListener rightLinkedTouchListener = new LinkedTouchListener();
+            rightLinkedTouchListener.otherListView = leftList;
+            rightList.setOnTouchListener(rightLinkedTouchListener);
+            
+            LinkedScrollListener leftLinkedScrollListener = new LinkedScrollListener();
+            leftLinkedScrollListener.otherListView = rightList;
+            leftList.setOnScrollListener(leftLinkedScrollListener);
+            
+            LinkedScrollListener rightLinkedScrollListener = new LinkedScrollListener();
+            rightLinkedScrollListener.otherListView = leftList;
+            rightList.setOnScrollListener(rightLinkedScrollListener);
+            
+            leftList.setAdapter(createAdapterLeft());
+            rightList.setAdapter(createAdapterRight());
             return rootView;
+        }
+        
+        // Overrides default OnTouchListener, allowing them to see each other
+        private class LinkedTouchListener implements View.OnTouchListener {
+        	public ListView otherListView = leftList; // set to other list view
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(touchSource == null) touchSource = v;
+				
+				if (v == touchSource) {
+					otherListView.dispatchTouchEvent(event);
+					if(event.getAction() == MotionEvent.ACTION_UP) {
+						clickSource = v; // prevent click on other object
+						touchSource = null;
+					}
+				}
+				return false;
+			}
+        }
+        
+        private class LinkedScrollListener implements AbsListView.OnScrollListener {
+        	public ListView otherListView = leftList; // set to other list view
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				if(view == clickSource)
+					otherListView.setSelectionFromTop(firstVisibleItem, view.getChildAt(0).getTop() + offset);
+			}
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {}
         }
         
         private RecipeCardAdapter createAdapterLeft() {
@@ -253,9 +307,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         			" really long, maybe because there's food in the background too that's part of the recipe",
         			R.drawable.friedfish));
         	recipes.add(1, new RecipeItem("Burnt Dumplings", 
-        			"Chester demonstrates how not to cook. Make sure you're alone first",
+        			"Chester demonstrates how not to cook. Make sure you're alone first (to avoid embarassment). We also recommend contacting the fire department in advance.",
         			R.drawable.burnt_dumplings));
-        	
+        	recipes.add(2, new RecipeItem("Unreal Cupcakes",
+        			"Yet another item to make the list long enough for some real scrolling to happen",
+        			R.drawable.cupcake));
         	return new RecipeCardAdapter(getActivity(), recipes);
         }
         
@@ -268,7 +324,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         	recipes.add(1, new RecipeItem("Rice and Beef",
         			"Awesome food inspired by Microsoft cafeterias and good code",
         			R.drawable.rice_and_chopsticks));
-        	
+        	recipes.add(2, new RecipeItem("Something amazing",
+        			"Trust us, we know what we're doing this time.",
+        			R.drawable.chef_hat));
         	
         	return new RecipeCardAdapter(getActivity(), recipes);
         }
