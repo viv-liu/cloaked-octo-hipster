@@ -22,6 +22,7 @@ import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -31,12 +32,14 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MotionEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -115,6 +118,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         // When the given tab is selected, switch to the corresponding page in the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+	    	case R.id.action_add:
+	    		Intent scanIntent = new Intent("com.google.zxing.client.android.SCAN");
+				scanIntent.putExtra("SCAN_MODE", "PRODUCT_MODE");
+				scanIntent.putExtra("SCAN_FORMATS", "UPC_A,UPC_E,EAN_8,EAN_13,CODE_39,CODE_93,CODE_128");
+				startActivityForResult(scanIntent, 0);
+	    		return true;
+    	}
+    	return false;
     }
 
     @Override
@@ -230,105 +245,75 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public static final String ARG_SECTION_NUMBER = "section_number";
         
         //private GridView cards;
-        private ListView leftList, rightList;
+        private LinearLayout leftList, rightList;
         
         // Vars to help with linked scrolling
-        int offset = 0;
         View clickSource, touchSource;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_recipes, container, false);
-            //Bundle args = getArguments();
-            //cards = (GridView) rootView.findViewById(R.id.recipes_cards_grid);
-            //cards.setAdapter(createAdapter());
-            leftList = (ListView) rootView.findViewById(R.id.recipes_list_left);
-            rightList = (ListView) rootView.findViewById(R.id.recipes_list_right);
             
-            // handling the linked scrolling
-            LinkedTouchListener leftLinkedTouchListener = new LinkedTouchListener();
-            leftLinkedTouchListener.otherListView = rightList;
-            leftList.setOnTouchListener(leftLinkedTouchListener);
-            
-            LinkedTouchListener rightLinkedTouchListener = new LinkedTouchListener();
-            rightLinkedTouchListener.otherListView = leftList;
-            rightList.setOnTouchListener(rightLinkedTouchListener);
-            
-            LinkedScrollListener leftLinkedScrollListener = new LinkedScrollListener();
-            leftLinkedScrollListener.otherListView = rightList;
-            leftList.setOnScrollListener(leftLinkedScrollListener);
-            
-            LinkedScrollListener rightLinkedScrollListener = new LinkedScrollListener();
-            rightLinkedScrollListener.otherListView = leftList;
-            rightList.setOnScrollListener(rightLinkedScrollListener);
-            
-            leftList.setAdapter(createAdapterLeft());
-            rightList.setAdapter(createAdapterRight());
-            return rootView;
-        }
-        
-        // Overrides default OnTouchListener, allowing them to see each other
-        private class LinkedTouchListener implements View.OnTouchListener {
-        	public ListView otherListView = leftList; // set to other list view
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if(touchSource == null) touchSource = v;
-				
-				if (v == touchSource) {
-					otherListView.dispatchTouchEvent(event);
-					if(event.getAction() == MotionEvent.ACTION_UP) {
-						clickSource = v; // prevent click on other object
-						touchSource = null;
-					}
-				}
-				return false;
-			}
-        }
-        
-        private class LinkedScrollListener implements AbsListView.OnScrollListener {
-        	public ListView otherListView = leftList; // set to other list view
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				if(view == clickSource)
-					otherListView.setSelectionFromTop(firstVisibleItem, view.getChildAt(0).getTop() + offset);
-			}
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {}
-        }
-        
-        private RecipeCardAdapter createAdapterLeft() {
-        	ArrayList<RecipeItem> recipes = new ArrayList<RecipeItem>();
-        	
-        	recipes.add(0, new RecipeItem("Fried Fish",
+            /* populate left and right lists */
+            ArrayList<RecipeItem> leftRecipes = new ArrayList<RecipeItem>();
+        	leftRecipes.add(0, new RecipeItem("Fried Fish",
         			"Sometimes appears in Asian supermarkets and Korean restuarants. For some reason this description is also really" +
         			" really long, maybe because there's food in the background too that's part of the recipe",
         			R.drawable.friedfish));
-        	recipes.add(1, new RecipeItem("Burnt Dumplings", 
+        	leftRecipes.add(1, new RecipeItem("Burnt Dumplings", 
         			"Chester demonstrates how not to cook. Make sure you're alone first (to avoid embarassment). We also recommend contacting the fire department in advance.",
         			R.drawable.burnt_dumplings));
-        	recipes.add(2, new RecipeItem("Unreal Cupcakes",
+        	leftRecipes.add(2, new RecipeItem("Unreal Cupcakes",
         			"Yet another item to make the list long enough for some real scrolling to happen",
         			R.drawable.cupcake));
-        	return new RecipeCardAdapter(getActivity(), recipes);
-        }
-        
-        private RecipeCardAdapter createAdapterRight() {
-        	ArrayList<RecipeItem> recipes = new ArrayList<RecipeItem>();
         	
-        	recipes.add(0, new RecipeItem("Ridiculous Omelet", 
+        	ArrayList<RecipeItem> rightRecipes = new ArrayList<RecipeItem>();
+        	rightRecipes.add(0, new RecipeItem("Ridiculous Omelet", 
         			"Inspires ragequitting and fruitless yelling. Reduces difficulty of all other recipes",
         			R.drawable.flipped_chef_hat));
-        	recipes.add(1, new RecipeItem("Rice and Beef",
+        	rightRecipes.add(1, new RecipeItem("Rice and Beef",
         			"Awesome food inspired by Microsoft cafeterias and good code",
         			R.drawable.rice_and_chopsticks));
-        	recipes.add(2, new RecipeItem("Something amazing",
+        	rightRecipes.add(2, new RecipeItem("Something amazing",
         			"Trust us, we know what we're doing this time.",
         			R.drawable.chef_hat));
         	
-        	return new RecipeCardAdapter(getActivity(), recipes);
+        	/* add to left and right lists */
+        	leftList = (LinearLayout) rootView.findViewById(R.id.recipes_list_left);
+        	rightList = (LinearLayout) rootView.findViewById(R.id.recipes_list_right);
+        	
+        	LinearLayout.LayoutParams cardSpacing = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 
+        			LinearLayout.LayoutParams.WRAP_CONTENT);
+        	cardSpacing.setMargins(0, 0, 0, 20);
+        	
+            for(int i = 0;i < leftRecipes.size();i++) {
+            	View cView = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_card_layout, container, false);
+    			TextView recipeTitle = (TextView) cView.findViewById(R.id.recipe_card_title);
+    			TextView recipeDescription = (TextView) cView.findViewById(R.id.recipe_card_description);
+    			ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
+    			recipeTitle.setText(leftRecipes.get(i).title);
+    			recipeDescription.setText(leftRecipes.get(i).description);
+    			recipeImage.setImageResource(leftRecipes.get(i).image);
+    			cView.setLayoutParams(cardSpacing);
+    			
+    			leftList.addView(cView);
+            }
+            for(int i = 0;i < rightRecipes.size();i++) {
+            	View cView = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_card_layout, container, false);
+    			TextView recipeTitle = (TextView) cView.findViewById(R.id.recipe_card_title);
+    			TextView recipeDescription = (TextView) cView.findViewById(R.id.recipe_card_description);
+    			ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
+    			recipeTitle.setText(rightRecipes.get(i).title);
+    			recipeDescription.setText(rightRecipes.get(i).description);
+    			recipeImage.setImageResource(rightRecipes.get(i).image);
+    			cView.setLayoutParams(cardSpacing);
+    			
+    			rightList.addView(cView);
+            }
+			
+            return rootView;
         }
+        
     }
 }

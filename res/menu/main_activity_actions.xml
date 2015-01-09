@@ -6,6 +6,10 @@
           android:title="@string/action_settings"
           android:showAsAction="never" />
     
+    <item android:id="@+id/action_add"
+        android:title="Add"
+        android:showAsAction="never" />
+    
     <!-- Search Widget -->
     <item
         android:id="@+id/action_search"
