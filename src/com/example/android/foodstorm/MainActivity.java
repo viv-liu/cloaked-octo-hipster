@@ -16,8 +16,6 @@
 
 package com.example.android.foodstorm;
 
-import com.example.android.effectivenavigation.R;
-
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
@@ -34,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -240,13 +239,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
-    public static class RecipesFragment extends Fragment {
+    public static class RecipesFragment extends Fragment implements OnClickListener {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
         
         //private GridView cards;
         private LinearLayout leftList, rightList;
-        
+        ArrayList<RecipeItem> leftRecipes;
+        ArrayList<RecipeItem> rightRecipes;
         // Vars to help with linked scrolling
         View clickSource, touchSource;
 
@@ -255,29 +255,36 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_recipes, container, false);
             
+            ArrayList<String> genericInstructions = new ArrayList<String>();
+        	
+        	genericInstructions.add("Sift together flour, salt, baking powder, and baking soda.");
+        	genericInstructions.add("Preheat oven to 350 degrees. Beat butter and sugars with a mixer on medium-high speed until pale and fluffy, about 4 minutes. Beat in eggs 1 at a time. Add vanilla. Reduce speed to low. Add flour mixture; beat until combined. Mix in chocolate chips.");
+        	genericInstructions.add("Using a 2 1/4-inch ice cream scoop (about 3 tablespoons), drop dough onto parchment-lined baking sheets, spacing about 2 inches apart. Bake until golden around edges but soft in the middle, about 15 minutes. Let cool for 5 minutes. Transfer cookies to a wire rack, and let cool completely.");
+        	
             /* populate left and right lists */
-            ArrayList<RecipeItem> leftRecipes = new ArrayList<RecipeItem>();
+            leftRecipes = new ArrayList<RecipeItem>();
+            
         	leftRecipes.add(0, new RecipeItem("Fried Fish",
         			"Sometimes appears in Asian supermarkets and Korean restuarants. For some reason this description is also really" +
         			" really long, maybe because there's food in the background too that's part of the recipe",
-        			R.drawable.friedfish));
+        			R.drawable.friedfish, genericInstructions));
         	leftRecipes.add(1, new RecipeItem("Burnt Dumplings", 
         			"Chester demonstrates how not to cook. Make sure you're alone first (to avoid embarassment). We also recommend contacting the fire department in advance.",
-        			R.drawable.burnt_dumplings));
+        			R.drawable.burnt_dumplings, genericInstructions));
         	leftRecipes.add(2, new RecipeItem("Unreal Cupcakes",
         			"Yet another item to make the list long enough for some real scrolling to happen",
-        			R.drawable.cupcake));
+        			R.drawable.cupcake, genericInstructions));
         	
-        	ArrayList<RecipeItem> rightRecipes = new ArrayList<RecipeItem>();
+        	rightRecipes = new ArrayList<RecipeItem>();
         	rightRecipes.add(0, new RecipeItem("Ridiculous Omelet", 
         			"Inspires ragequitting and fruitless yelling. Reduces difficulty of all other recipes",
-        			R.drawable.flipped_chef_hat));
+        			R.drawable.flipped_chef_hat, genericInstructions));
         	rightRecipes.add(1, new RecipeItem("Rice and Beef",
         			"Awesome food inspired by Microsoft cafeterias and good code",
-        			R.drawable.rice_and_chopsticks));
+        			R.drawable.rice_and_chopsticks, genericInstructions));
         	rightRecipes.add(2, new RecipeItem("Something amazing",
         			"Trust us, we know what we're doing this time.",
-        			R.drawable.chef_hat));
+        			R.drawable.chef_hat, genericInstructions));
         	
         	/* add to left and right lists */
         	leftList = (LinearLayout) rootView.findViewById(R.id.recipes_list_left);
@@ -286,6 +293,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         	LinearLayout.LayoutParams cardSpacing = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 
         			LinearLayout.LayoutParams.WRAP_CONTENT);
         	cardSpacing.setMargins(0, 0, 0, 20);
+        	
+        	/* Each view is assigned an integer id for OnClick identification. 
+        	 * In leftRecipes, ids range from 0 to leftRecipes.size() - 1
+        	 * In rightRecipes, ids range from leftRecipes.size() + 0 to leftRecipes.size() +  rightRecipes.size() - 1 */
         	
             for(int i = 0;i < leftRecipes.size();i++) {
             	View cView = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_card_layout, container, false);
@@ -296,7 +307,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     			recipeDescription.setText(leftRecipes.get(i).description);
     			recipeImage.setImageResource(leftRecipes.get(i).image);
     			cView.setLayoutParams(cardSpacing);
-    			
+    			cView.setId(i);
+    			cView.setOnClickListener(this);
     			leftList.addView(cView);
             }
             for(int i = 0;i < rightRecipes.size();i++) {
@@ -308,12 +320,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     			recipeDescription.setText(rightRecipes.get(i).description);
     			recipeImage.setImageResource(rightRecipes.get(i).image);
     			cView.setLayoutParams(cardSpacing);
-    			
+    			cView.setId(i + leftRecipes.size());
+    			cView.setOnClickListener(this);
     			rightList.addView(cView);
             }
 			
             return rootView;
         }
+
+		@Override
+		public void onClick(View v) {
+			int id = v.getId();
+			if(id < leftRecipes.size()) {
+				RecipeDetailsActivity.RECIPE = leftRecipes.get(id);
+                Intent intent = new Intent(getActivity(), RecipeDetailsActivity.class);
+                startActivity(intent);
+			} else {
+				RecipeDetailsActivity.RECIPE = rightRecipes.get(id - leftRecipes.size());
+                Intent intent = new Intent(getActivity(), RecipeDetailsActivity.class);
+                startActivity(intent);
+			}
+			
+		}
         
     }
 }

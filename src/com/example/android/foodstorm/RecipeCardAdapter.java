@@ -1,6 +1,5 @@
 package com.example.android.foodstorm;
 
-import com.example.android.effectivenavigation.R;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.example.android.effectivenavigation.R;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;

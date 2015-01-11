@@ -15,7 +15,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.effectivenavigation"
+    package="com.example.android.foodstorm"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -31,6 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+		<activity android:name=".RecipeDetailsActivity"></activity>
     </application>
 </manifest>
