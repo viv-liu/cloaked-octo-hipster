@@ -25,28 +25,28 @@ import android.widget.TextView;
  * @author Vivian
  *
  */
-public class FridgeItemAdapter extends ArrayAdapter<FridgeFoodItem> implements Filterable {
+public class FridgeItemAdapter extends ArrayAdapter<FoodItem> implements Filterable {
 	private static final String TAG = "FridgeItemAdapter";
 	private static final Integer LIST_HEADER = 0;
     private static final Integer LIST_ITEM = 1;
     
 	private final Context mContext;
-	private final List<FridgeFoodItem> FOOD_GROUPS_AS_FRIDGEFOODITEMS;
+	private final List<FoodItem> FOOD_GROUPS_AS_FRIDGEFOODITEMS;
 	
-	private List<FridgeFoodItem> mOriginalFoodList;
-	private List<FridgeFoodItem> mFilteringList;
+	private List<FoodItem> mOriginalFoodList;
+	private List<FoodItem> mFilteringList;
 	
-	public FridgeItemAdapter(Context c, FridgeFoodItem[] fl){
+	public FridgeItemAdapter(Context c, FoodItem[] fl){
 		super(c, android.R.layout.simple_list_item_1, fl);
 		mContext = c;
 		
 		// Create food groups as FridgeFoodItems; for easy insertion into food lists as headers
-		FOOD_GROUPS_AS_FRIDGEFOODITEMS = new ArrayList<FridgeFoodItem>();
-		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FridgeFoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true));
-		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FridgeFoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true));
+		FOOD_GROUPS_AS_FRIDGEFOODITEMS = new ArrayList<FoodItem>();
+		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true, 0, "none"));
+		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true, 0, "none"));
 		
-		mOriginalFoodList = new ArrayList<FridgeFoodItem>(Arrays.asList(fl));		
-		mFilteringList = new ArrayList<FridgeFoodItem>(Arrays.asList(fl));		
+		mOriginalFoodList = new ArrayList<FoodItem>(Arrays.asList(fl));		
+		mFilteringList = new ArrayList<FoodItem>(Arrays.asList(fl));		
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class FridgeItemAdapter extends ArrayAdapter<FridgeFoodItem> implements F
     }
 
     @Override
-    public FridgeFoodItem getItem(int position) {
+    public FoodItem getItem(int position) {
     	// If position is out of index
     	if(position >= mFilteringList.size()) {
     		return null;
@@ -139,17 +139,17 @@ public class FridgeItemAdapter extends ArrayAdapter<FridgeFoodItem> implements F
             @Override
             protected void publishResults(CharSequence constraint,FilterResults results) {
 
-                mFilteringList = (List<FridgeFoodItem>) results.values; // has the filtered values
+                mFilteringList = (List<FoodItem>) results.values; // has the filtered values
                 notifyDataSetChanged();  // notifies the data with new filtered values
             }
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
-                List<FridgeFoodItem> FilteredArrList = new ArrayList<FridgeFoodItem>();
+                List<FoodItem> FilteredArrList = new ArrayList<FoodItem>();
 
                 if (mOriginalFoodList == null) {
-                    mOriginalFoodList = new ArrayList<FridgeFoodItem>(mFilteringList); // saves the original data in mOriginalValues
+                    mOriginalFoodList = new ArrayList<FoodItem>(mFilteringList); // saves the original data in mOriginalValues
                 }
 
                 /********
@@ -170,7 +170,7 @@ public class FridgeItemAdapter extends ArrayAdapter<FridgeFoodItem> implements F
                     
                     // Iterate through the rest of the foods, add ones that satisfy the constraint to FilteredArrList AND is NOT a header
                     for (int i = 0; i < mOriginalFoodList.size(); i++) {
-                        FridgeFoodItem data = mOriginalFoodList.get(i);
+                        FoodItem data = mOriginalFoodList.get(i);
                         if (data.name.toLowerCase().startsWith(constraint.toString()) && !data.isHeader) {
                         	
                         	// Next food group, add the PROTEIN (and etc.) header

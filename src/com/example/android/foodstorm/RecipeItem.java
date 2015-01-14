@@ -13,6 +13,7 @@ public class RecipeItem {
 	public String description;
 	public int image;
 	List<String> directions;
+	List<FoodItem> ingredients;
 	
 	public RecipeItem(String t, String desc){
 		title = t;
@@ -26,10 +27,11 @@ public class RecipeItem {
 		directions.add("Or not");
 	}
 	
-	public RecipeItem(String t, String desc, int i, List<String> d) {
+	public RecipeItem(String t, String desc, int i, List<String> d, List<FoodItem> ing) {
 		title = t;
 		description = desc;
 		image = i;
 		directions = d;
+		ingredients = ing;
 	}
 }

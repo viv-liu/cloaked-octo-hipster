@@ -7,7 +7,6 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
-import android.widget.ImageView;
 import java.util.List;
 import android.content.Context;
 
@@ -48,11 +47,11 @@ public class DirectionCardAdapter extends BaseAdapter {
 			holder.directionDescription = (TextView) cView.findViewById(R.id.direction_card_description);
 			cView.setTag(holder);
 		}
-		if(idx == 0) {
+		/*if(idx == 0) {
 			LinearLayout.LayoutParams cardLayoutParams = new  LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			cardLayoutParams.setMargins(10, 10, 10, 5);
 			cView.setLayoutParams(cardLayoutParams);
-		}
+		}*/
 		holder.directionIndex.setText(String.valueOf(idx));
 		holder.directionDescription.setText(directions.get(idx));
 		return cView;

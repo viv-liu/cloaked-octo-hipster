@@ -178,20 +178,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * A fragment that launches other parts of the demo application.
      */
     public static class FridgeFragment extends Fragment {
-    	static FridgeFoodItem[] fridgeList; 
+    	static FoodItem[] fridgeList; 
     	private FridgeItemAdapter adapter;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
         	setHasOptionsMenu(true);
         	// For testing, hardcode some list items
-        	fridgeList = new FridgeFoodItem[6];
-        	fridgeList[0] = new FridgeFoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true);
-        	fridgeList[1] = new FridgeFoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat, false);
-        	fridgeList[2] = new FridgeFoodItem("TestCabbage", FoodGroup.PRODUCE, R.drawable.chef_hat, false);
-        	fridgeList[3] = new FridgeFoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true);
-        	fridgeList[4] = new FridgeFoodItem("TestCupcake", FoodGroup.PROTEIN, R.drawable.chef_hat, false);
-        	fridgeList[5] = new FridgeFoodItem("TestTornadoChicken", FoodGroup.PROTEIN, R.drawable.chef_hat, false);
+        	fridgeList = new FoodItem[6];
+        	fridgeList[0] = new FoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true, 0, "none");
+        	fridgeList[1] = new FoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 2.4f, "stalks");
+        	fridgeList[2] = new FoodItem("TestCabbage", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1f, "heads");
+        	fridgeList[3] = new FoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true, 0, "none");
+        	fridgeList[4] = new FoodItem("TestCupcake", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 1f, "units");
+        	fridgeList[5] = new FoodItem("TestTornadoChicken", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 0.2f, "puffs");
         	
         	adapter = new FridgeItemAdapter(getActivity(), fridgeList);
             View rootView = inflater.inflate(R.layout.fragment_section_fridge, container, false);
@@ -261,30 +261,46 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         	genericInstructions.add("Preheat oven to 350 degrees. Beat butter and sugars with a mixer on medium-high speed until pale and fluffy, about 4 minutes. Beat in eggs 1 at a time. Add vanilla. Reduce speed to low. Add flour mixture; beat until combined. Mix in chocolate chips.");
         	genericInstructions.add("Using a 2 1/4-inch ice cream scoop (about 3 tablespoons), drop dough onto parchment-lined baking sheets, spacing about 2 inches apart. Bake until golden around edges but soft in the middle, about 15 minutes. Let cool for 5 minutes. Transfer cookies to a wire rack, and let cool completely.");
         	
+        	ArrayList<FoodItem> genericIngredientsA = new ArrayList<FoodItem>();
+        	
+        	genericIngredientsA.add(new FoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1.5f, "stalks"));
+        	genericIngredientsA.add(new FoodItem("Zebra hat", FoodGroup.PROTEIN, R.drawable.cupcake, false, 65, "batches"));
+        	genericIngredientsA.add(new FoodItem("Viv's lunch", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 0.5f, "boxes"));
+        	genericIngredientsA.add(new FoodItem("Pudding", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 32f, "spoons"));
+        	genericIngredientsA.add(new FoodItem("Global warming", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 3f, "Earths"));
+        	
+        	ArrayList<FoodItem> genericIngredientsB = new ArrayList<FoodItem>();
+        	
+        	genericIngredientsB.add(new FoodItem("TestMuffin", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1.5f, "stalks"));
+        	genericIngredientsB.add(new FoodItem("Musical essences", FoodGroup.PROTEIN, R.drawable.cupcake, false, 4, "pianos"));
+        	genericIngredientsB.add(new FoodItem("Perfect perfect snowflakes", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1000.3f, "flakes"));
+        	genericIngredientsB.add(new FoodItem("Dog food jellybeans", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 32f, "jellies"));
+        	genericIngredientsB.add(new FoodItem("Montezuma's head", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 1f, "bloodied"));
+        	
             /* populate left and right lists */
             leftRecipes = new ArrayList<RecipeItem>();
             
         	leftRecipes.add(0, new RecipeItem("Fried Fish",
         			"Sometimes appears in Asian supermarkets and Korean restuarants. For some reason this description is also really" +
         			" really long, maybe because there's food in the background too that's part of the recipe",
-        			R.drawable.friedfish, genericInstructions));
+        			R.drawable.friedfish, genericInstructions, genericIngredientsA));
         	leftRecipes.add(1, new RecipeItem("Burnt Dumplings", 
         			"Chester demonstrates how not to cook. Make sure you're alone first (to avoid embarassment). We also recommend contacting the fire department in advance.",
-        			R.drawable.burnt_dumplings, genericInstructions));
+        			R.drawable.burnt_dumplings, genericInstructions, genericIngredientsB));
         	leftRecipes.add(2, new RecipeItem("Unreal Cupcakes",
         			"Yet another item to make the list long enough for some real scrolling to happen",
-        			R.drawable.cupcake, genericInstructions));
+        			R.drawable.cupcake, genericInstructions, genericIngredientsB));
         	
         	rightRecipes = new ArrayList<RecipeItem>();
         	rightRecipes.add(0, new RecipeItem("Ridiculous Omelet", 
         			"Inspires ragequitting and fruitless yelling. Reduces difficulty of all other recipes",
-        			R.drawable.flipped_chef_hat, genericInstructions));
+        			R.drawable.flipped_chef_hat, genericInstructions, genericIngredientsA));
         	rightRecipes.add(1, new RecipeItem("Rice and Beef",
         			"Awesome food inspired by Microsoft cafeterias and good code",
-        			R.drawable.rice_and_chopsticks, genericInstructions));
+        			R.drawable.rice_and_chopsticks, genericInstructions, genericIngredientsB));
         	rightRecipes.add(2, new RecipeItem("Something amazing",
         			"Trust us, we know what we're doing this time.",
-        			R.drawable.chef_hat, genericInstructions));
+        			R.drawable.chef_hat, genericInstructions, genericIngredientsB));
         	
         	/* add to left and right lists */
         	leftList = (LinearLayout) rootView.findViewById(R.id.recipes_list_left);
