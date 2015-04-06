@@ -21,6 +21,7 @@ import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -34,13 +35,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -99,15 +116,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         .setIcon(R.drawable.chef_hat)
                         .setTabListener(this));
     }
-    
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_actions, menu);
-        return super.onCreateOptionsMenu(menu);
-    }*/
-    
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -122,10 +130,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
 	    	case R.id.action_add:
+	    		/*IntentIntegrator integrator = new IntentIntegrator(this);
+	    		integrator.initiateScan();
 	    		Intent scanIntent = new Intent("com.google.zxing.client.android.SCAN");
 				scanIntent.putExtra("SCAN_MODE", "PRODUCT_MODE");
 				scanIntent.putExtra("SCAN_FORMATS", "UPC_A,UPC_E,EAN_8,EAN_13,CODE_39,CODE_93,CODE_128");
-				startActivityForResult(scanIntent, 0);
+				startActivityForResult(scanIntent, 0);*/
+	    		
+	    		Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+                startActivity(intent);
 	    		return true;
     	}
     	return false;
@@ -133,6 +146,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+    
+    public void onActivityResult(int requestCode, int resultCode, Intent intent){
+    	IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+    	if(scanResult != null){
+    		String code = scanResult.getContents();
+    		Toast.makeText(getApplicationContext(), code, Toast.LENGTH_LONG).show();
+    		UpcRequestTask requestTask = new UpcRequestTask();
+    		requestTask.appContext = getApplicationContext();
+    		requestTask.execute(code);
+    		
+    	} else Toast.makeText(getApplicationContext(), "Barcode scan failed", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -175,28 +200,43 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     /**
-     * A fragment that launches other parts of the demo application.
+     * Fridge fragment
      */
     public static class FridgeFragment extends Fragment {
-    	static FoodItem[] fridgeList; 
+    	static List<FoodItem> fridgeList; 
     	private FridgeItemAdapter adapter;
+    	private FoodSQLiteHelper dataSource;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
         	setHasOptionsMenu(true);
-        	// For testing, hardcode some list items
-        	fridgeList = new FoodItem[6];
-        	fridgeList[0] = new FoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true, 0, "none");
-        	fridgeList[1] = new FoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 2.4f, "stalks");
-        	fridgeList[2] = new FoodItem("TestCabbage", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1f, "heads");
-        	fridgeList[3] = new FoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true, 0, "none");
-        	fridgeList[4] = new FoodItem("TestCupcake", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 1f, "units");
-        	fridgeList[5] = new FoodItem("TestTornadoChicken", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 0.2f, "puffs");
         	
-        	adapter = new FridgeItemAdapter(getActivity(), fridgeList);
+        	dataSource = new FoodSQLiteHelper(getActivity());
+        	fridgeList = dataSource.getAllFoods();
+        	
+        	OnClickListener itemClickListener = new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					FoodItem food;
+					food = fridgeList.get(((View) v.getTag()).getId());
+					dataSource.deleteFood(food);
+					
+					Toast.makeText(getActivity(), food.name + " deleted!", Toast.LENGTH_SHORT).show();
+					
+					fridgeList = dataSource.getAllFoods();
+					adapter.notifyDataSetChanged();
+				}};
+			adapter = new FridgeItemAdapter(getActivity(), fridgeList, itemClickListener, R.drawable.x);
             View rootView = inflater.inflate(R.layout.fragment_section_fridge, container, false);
             return rootView;
         }
+        
+        public void onResume() {
+        	super.onResume();
+        	fridgeList = dataSource.getAllFoods();
+        	adapter.notifyDataSetChanged();
+        }
+        
         @Override
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
             inflater.inflate(R.menu.main_activity_actions, menu);
@@ -230,10 +270,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         public void onStart() {
         	super.onStart();
+        	Button fridge_add = (Button)getActivity().findViewById(R.id.fridge_add);
+        	OnClickListener addClickListener = new OnClickListener() {
+        		public void onClick(View v) {
+        			Intent intent = new Intent(getActivity().getApplicationContext(), AddActivity.class);
+                    startActivity(intent);
+        		}
+        	};
+        	fridge_add.setOnClickListener(addClickListener);
+        	
+        	
         	ListView lv_produce = (ListView)getActivity().findViewById(R.id.lv_fridge);
             lv_produce.setAdapter(adapter);
             lv_produce.setTextFilterEnabled(true); // for search filtering
         }
+        
     }
 
     /**
@@ -349,8 +400,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			int id = v.getId();
 			if(id < leftRecipes.size()) {
 				RecipeDetailsActivity.RECIPE = leftRecipes.get(id);
-                Intent intent = new Intent(getActivity(), RecipeDetailsActivity.class);
-                startActivity(intent);
 			} else {
 				RecipeDetailsActivity.RECIPE = rightRecipes.get(id - leftRecipes.size());
                 Intent intent = new Intent(getActivity(), RecipeDetailsActivity.class);

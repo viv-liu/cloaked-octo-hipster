@@ -12,6 +12,7 @@ public class FoodItem {
 	public boolean isHeader;
 	public float quantity;
 	public String units;
+	
 	public FoodItem(String n, FoodGroup fg, int i, boolean h, float q, String u){
 		name = n;
 		foodGroup = fg;

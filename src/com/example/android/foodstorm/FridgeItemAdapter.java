@@ -8,10 +8,12 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,17 +38,30 @@ public class FridgeItemAdapter extends ArrayAdapter<FoodItem> implements Filtera
 	private List<FoodItem> mOriginalFoodList;
 	private List<FoodItem> mFilteringList;
 	
-	public FridgeItemAdapter(Context c, FoodItem[] fl){
+	// might want to put these in a separate constructor
+	public OnClickListener itemClickListener = null;
+	public int actionIcon = -1;
+	
+	public FridgeItemAdapter(Context c, List<FoodItem> fl) {
 		super(c, android.R.layout.simple_list_item_1, fl);
 		mContext = c;
 		
-		// Create food groups as FridgeFoodItems; for easy insertion into food lists as headers
 		FOOD_GROUPS_AS_FRIDGEFOODITEMS = new ArrayList<FoodItem>();
 		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true, 0, "none"));
 		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true, 0, "none"));
 		
-		mOriginalFoodList = new ArrayList<FoodItem>(Arrays.asList(fl));		
-		mFilteringList = new ArrayList<FoodItem>(Arrays.asList(fl));		
+		mOriginalFoodList = fl;
+		mFilteringList = fl;
+	}
+	
+	public FridgeItemAdapter(Context c, FoodItem[] fl){
+		this(c, Arrays.asList(fl));		
+	}
+	
+	public FridgeItemAdapter(Context c, List<FoodItem> fl, OnClickListener listener, int icon){
+		this(c, fl);
+		itemClickListener = listener;
+		actionIcon = icon;
 	}
 	
 	@Override
@@ -79,23 +94,18 @@ public class FridgeItemAdapter extends ArrayAdapter<FoodItem> implements Filtera
     }
 	
 	public View getView(int position, View convertView, ViewGroup parent) {		
-
 		// TODO: add more ORs when more FoodGroup enums added
 		String foodName = new String(mFilteringList.get(position).name);
 		if(foodName.equals(FoodGroup.PRODUCE.toString()) ||
 		   foodName.equals(FoodGroup.PROTEIN.toString())) {
 			String headerText = getHeader(position);
 			if(headerText != null) {
-
 	            View item = convertView;
 	            if(convertView == null || convertView.getTag() == LIST_ITEM) {
-
 	                item = LayoutInflater.from(mContext).inflate(
 	                        R.layout.lv_header_layout, parent, false);
 	                item.setTag(LIST_HEADER);
-
 	            }
-
 	            TextView headerTextView = (TextView)item.findViewById(R.id.lv_list_hdr);
 	            headerTextView.setText(headerText);
 	            return item;
@@ -115,15 +125,23 @@ public class FridgeItemAdapter extends ArrayAdapter<FoodItem> implements Filtera
         
         ImageView imageView = (ImageView) item.findViewById(R.id.lv_item_icon);
 		imageView.setImageResource(mFilteringList.get(position).icon);
-        // Any other kind of info we want to stick into the subtext?
         TextView subtext = (TextView)item.findViewById(R.id.lv_item_subtext);
         subtext.setText("*Any extra info that may need displaying*");
-        
-        //Set last divider (grey line) in a sublist invisible
-        /*View divider = item.findViewById(R.id.item_separator);
-        if(position == mFoodItemList.length - 1) {
-            divider.setVisibility(View.INVISIBLE);
-        }*/
+         
+        // set a click listener to the right button
+        ImageButton rightButton = (ImageButton)item.findViewById(R.id.button);
+        if(itemClickListener != null && rightButton != null){
+        	/* slightly convoluted scheme where tag is set to item (parent),
+        	 * and item's id is set to the position. Using tag directly 
+        	 * doesn't work. idk why.
+        	 */
+        	item.setId(position);
+        	rightButton.setTag(item);
+        	rightButton.setOnClickListener(itemClickListener);
+        }
+        if(rightButton != null && actionIcon > 0){
+        	rightButton.setImageResource(actionIcon);
+        }
         return item;
     }
 
@@ -134,7 +152,6 @@ public class FridgeItemAdapter extends ArrayAdapter<FoodItem> implements Filtera
     @Override
     public Filter getFilter() {
         Filter filter = new Filter() {
-
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint,FilterResults results) {
@@ -191,13 +208,4 @@ public class FridgeItemAdapter extends ArrayAdapter<FoodItem> implements Filtera
         };
         return filter;
     }
-	// Creates string array from array of fridge items. 
-	// Needed to make super constructor call one line (because it has to be the first line)
-	/*private static String[] fridgeListItemToStrArr(FridgeFoodItem[] values){
-		String[] strValues = new String[values.length];
-		for(int i = 0;i < values.length;i++) {
-			strValues[i] = values[i].name;
-		}
-		return strValues;
-	}*/
 }
