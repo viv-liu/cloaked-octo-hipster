@@ -1,5 +1,6 @@
 package com.example.android.foodstorm;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class FoodSQLiteHelper extends SQLiteOpenHelper {
 	public static final int DB_VERSION = 1;
 	
 	public static final String FOODS_TBL_NAME = "foods";
+	public static final String FOODS_ID_FIELD = "foodId";
 	public static final String FOODS_NAME_FIELD = "name";
 	public static final String FOODS_GROUP_FIELD = "foodgroup";
 	public static final String FOODS_ICON_FIELD = "icon";
@@ -33,9 +35,9 @@ public class FoodSQLiteHelper extends SQLiteOpenHelper {
 	  }
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		FoodItem food = new FoodItem("TestFood", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1, "units");
-		db.execSQL("CREATE TABLE " + FOODS_TBL_NAME + 
-				"(" + FOODS_NAME_FIELD + " TEXT NOT NULL, " +
+		db.execSQL("CREATE TABLE " + FOODS_TBL_NAME +
+				"(" + FOODS_ID_FIELD + " INTEGER, " +
+				FOODS_NAME_FIELD + " TEXT NOT NULL, " +
 				FOODS_GROUP_FIELD + " TEXT, " +
 				FOODS_ICON_FIELD + " TEXT, " +
 				FOODS_QUANTITY_FIELD + " FLOAT, " +
@@ -51,23 +53,32 @@ public class FoodSQLiteHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 	
-	public void addFood(FoodItem food){
+	public int addFood(FoodItem food){
+		int rc = 0;
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
+		values.put(FoodSQLiteHelper.FOODS_ID_FIELD, food.id);
 		values.put(FoodSQLiteHelper.FOODS_NAME_FIELD, food.name);
 		values.put(FoodSQLiteHelper.FOODS_GROUP_FIELD, food.foodGroup.toString());
 		values.put(FoodSQLiteHelper.FOODS_ICON_FIELD, food.icon);
 		values.put(FoodSQLiteHelper.FOODS_QUANTITY_FIELD, food.quantity);
 		values.put(FoodSQLiteHelper.FOODS_UNITS_FIELD, food.units);
-		
-		db.insert(FOODS_TBL_NAME, null, values);
+
+		//if(db.insert(FOODS_TBL_NAME, null, values) < 0) rc = -1;
+		try {
+			db.insertOrThrow(FOODS_TBL_NAME, null, values);
+		} catch(android.database.SQLException e) {
+			return -1;
+		}
 		db.close();
 		
 		if(foodsList != null) foodsList.add(food);
+		return rc;
 	}
 	
 	public void deleteFood(FoodItem food) {
 		SQLiteDatabase db = this.getWritableDatabase();
+		// TODO: Change to ID
 		db.execSQL("DELETE FROM " + FOODS_TBL_NAME + 
 				" WHERE " + FOODS_NAME_FIELD + "='" + food.name + "';");
 		db.close();
@@ -90,6 +101,7 @@ public class FoodSQLiteHelper extends SQLiteOpenHelper {
 		if(foodsList != null) return foodsList;
 		List<FoodItem> foods = new ArrayList<FoodItem>();
 		String[] allCols = {
+				FoodSQLiteHelper.FOODS_ID_FIELD,
 				FoodSQLiteHelper.FOODS_NAME_FIELD,
 				FoodSQLiteHelper.FOODS_GROUP_FIELD,
 				FoodSQLiteHelper.FOODS_ICON_FIELD,
@@ -101,12 +113,12 @@ public class FoodSQLiteHelper extends SQLiteOpenHelper {
 		
 		cursor.moveToFirst();
 		while(! cursor.isAfterLast()){
-			FoodItem food = new FoodItem(cursor.getString(0), 
+			FoodItem food = new FoodItem(cursor.getInt(0), cursor.getString(1),
 					FoodGroup.PRODUCE,  // todo: group
-					Integer.parseInt(cursor.getString(2)),
+					Integer.parseInt(cursor.getString(3)),
 					false,
-					Float.parseFloat(cursor.getString(3)),
-					cursor.getString(4));
+					Float.parseFloat(cursor.getString(4)),
+					cursor.getString(5));
 			foods.add(food);
 			cursor.moveToNext();
 		}

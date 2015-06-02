@@ -36,7 +36,6 @@ public class AddActivity extends Activity implements SearchView.OnQueryTextListe
     	searchList = (ListView)findViewById(R.id.add_listview);
     	
     	fridgeList = new ArrayList<FoodItem>();
-    	fridgeList.add(new FoodItem("Results show up here", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 2.4f, "stalks"));
     	    	
     	adapter = new FridgeItemAdapter(this, fridgeList, this, R.drawable.plus);
     	searchList.setAdapter(adapter);
@@ -71,7 +70,10 @@ public class AddActivity extends Activity implements SearchView.OnQueryTextListe
 		
 		return false;
 	}
-	
+
+	/* Could display matching items as name is typed, but
+	   that would result in a lot of requests back to the server
+	 */
 	@Override
 	public boolean onQueryTextChange(String newText) { return false; }
 	
@@ -104,8 +106,9 @@ public class AddActivity extends Activity implements SearchView.OnQueryTextListe
 		
 		food = fridgeList.get(((View)view.getTag()).getId()); // hope this is it
 		dataSource = new FoodSQLiteHelper(this);
-		dataSource.addFood(food);
-		
-		Toast.makeText(this, food.name + " added!", Toast.LENGTH_SHORT).show();
+		if(dataSource.addFood(food) == 0) {
+			Toast.makeText(this, food.name + " added!", Toast.LENGTH_SHORT).show();
+			MainActivity.FridgeFragment.fridgeListChanged = true;
+		} else Toast.makeText(this, "Add failed!", Toast.LENGTH_SHORT).show();
 	}	
 }

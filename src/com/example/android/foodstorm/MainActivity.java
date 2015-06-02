@@ -56,8 +56,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+//import com.google.zxing.integration.android.IntentIntegrator;
+//import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -74,10 +74,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * time.
      */
     ViewPager mViewPager;
+	public static FoodSQLiteHelper dataSource;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+		dataSource = new FoodSQLiteHelper(this);
 
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
@@ -85,12 +88,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
-
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-        actionBar.setHomeButtonEnabled(false);
-
-        // Specify that we will be displaying tabs in the action bar.
+        actionBar.setHomeButtonEnabled(false);     // no home/up button
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Set up the ViewPager, attaching the adapter and setting up a listener for when the
@@ -100,9 +98,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                // When swiping between different app sections, select the corresponding tab.
-                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                // Tab.
                 actionBar.setSelectedNavigationItem(position);
             }
         });
@@ -149,7 +144,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
     
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
-    	IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+    	/*IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
     	if(scanResult != null){
     		String code = scanResult.getContents();
     		Toast.makeText(getApplicationContext(), code, Toast.LENGTH_LONG).show();
@@ -157,7 +152,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     		requestTask.appContext = getApplicationContext();
     		requestTask.execute(code);
     		
-    	} else Toast.makeText(getApplicationContext(), "Barcode scan failed", Toast.LENGTH_SHORT).show();
+    	} else Toast.makeText(getApplicationContext(), "Barcode scan failed", Toast.LENGTH_SHORT).show();*/
     }
 
     /**
@@ -203,23 +198,25 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * Fridge fragment
      */
     public static class FridgeFragment extends Fragment {
-    	static List<FoodItem> fridgeList; 
+    	public static List<FoodItem> fridgeList;
+		public static boolean fridgeListChanged = true; // prevent refreshing recipes when we don't need to
     	private FridgeItemAdapter adapter;
-    	private FoodSQLiteHelper dataSource;
+    	public FoodSQLiteHelper dataSource; // for convenience
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
         	setHasOptionsMenu(true);
         	
-        	dataSource = new FoodSQLiteHelper(getActivity());
+        	dataSource = MainActivity.dataSource;
         	fridgeList = dataSource.getAllFoods();
         	
         	OnClickListener itemClickListener = new OnClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick(View v) { // deletion handling
 					FoodItem food;
 					food = fridgeList.get(((View) v.getTag()).getId());
 					dataSource.deleteFood(food);
+					fridgeListChanged = true;
 					
 					Toast.makeText(getActivity(), food.name + " deleted!", Toast.LENGTH_SHORT).show();
 					
@@ -234,6 +231,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public void onResume() {
         	super.onResume();
         	fridgeList = dataSource.getAllFoods();
+			fridgeListChanged = true;
         	adapter.notifyDataSetChanged();
         }
         
@@ -298,6 +296,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         private LinearLayout leftList, rightList;
         ArrayList<RecipeItem> leftRecipes;
         ArrayList<RecipeItem> rightRecipes;
+		ViewGroup recipesContainer = null;
+		LinearLayout.LayoutParams cardSpacing = null;
         // Vars to help with linked scrolling
         View clickSource, touchSource;
 
@@ -305,107 +305,107 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_recipes, container, false);
-            
-            ArrayList<String> genericInstructions = new ArrayList<String>();
-        	
-        	genericInstructions.add("Sift together flour, salt, baking powder, and baking soda.");
-        	genericInstructions.add("Preheat oven to 350 degrees. Beat butter and sugars with a mixer on medium-high speed until pale and fluffy, about 4 minutes. Beat in eggs 1 at a time. Add vanilla. Reduce speed to low. Add flour mixture; beat until combined. Mix in chocolate chips.");
-        	genericInstructions.add("Using a 2 1/4-inch ice cream scoop (about 3 tablespoons), drop dough onto parchment-lined baking sheets, spacing about 2 inches apart. Bake until golden around edges but soft in the middle, about 15 minutes. Let cool for 5 minutes. Transfer cookies to a wire rack, and let cool completely.");
-        	
-        	ArrayList<FoodItem> genericIngredientsA = new ArrayList<FoodItem>();
-        	
-        	genericIngredientsA.add(new FoodItem("TestCarrot", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1.5f, "stalks"));
-        	genericIngredientsA.add(new FoodItem("Zebra hat", FoodGroup.PROTEIN, R.drawable.cupcake, false, 65, "batches"));
-        	genericIngredientsA.add(new FoodItem("Viv's lunch", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 0.5f, "boxes"));
-        	genericIngredientsA.add(new FoodItem("Pudding", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 32f, "spoons"));
-        	genericIngredientsA.add(new FoodItem("Global warming", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 3f, "Earths"));
-        	
-        	ArrayList<FoodItem> genericIngredientsB = new ArrayList<FoodItem>();
-        	
-        	genericIngredientsB.add(new FoodItem("TestMuffin", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1.5f, "stalks"));
-        	genericIngredientsB.add(new FoodItem("Musical essences", FoodGroup.PROTEIN, R.drawable.cupcake, false, 4, "pianos"));
-        	genericIngredientsB.add(new FoodItem("Perfect perfect snowflakes", FoodGroup.PRODUCE, R.drawable.chef_hat, false, 1000.3f, "flakes"));
-        	genericIngredientsB.add(new FoodItem("Dog food jellybeans", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 32f, "jellies"));
-        	genericIngredientsB.add(new FoodItem("Montezuma's head", FoodGroup.PROTEIN, R.drawable.chef_hat, false, 1f, "bloodied"));
-        	
+
+			recipesContainer = container;
+
             /* populate left and right lists */
             leftRecipes = new ArrayList<RecipeItem>();
-            
-        	leftRecipes.add(0, new RecipeItem("Fried Fish",
-        			"Sometimes appears in Asian supermarkets and Korean restuarants. For some reason this description is also really" +
-        			" really long, maybe because there's food in the background too that's part of the recipe",
-        			R.drawable.friedfish, genericInstructions, genericIngredientsA));
-        	leftRecipes.add(1, new RecipeItem("Burnt Dumplings", 
-        			"Chester demonstrates how not to cook. Make sure you're alone first (to avoid embarassment). We also recommend contacting the fire department in advance.",
-        			R.drawable.burnt_dumplings, genericInstructions, genericIngredientsB));
-        	leftRecipes.add(2, new RecipeItem("Unreal Cupcakes",
-        			"Yet another item to make the list long enough for some real scrolling to happen",
-        			R.drawable.cupcake, genericInstructions, genericIngredientsB));
-        	
         	rightRecipes = new ArrayList<RecipeItem>();
-        	rightRecipes.add(0, new RecipeItem("Ridiculous Omelet", 
-        			"Inspires ragequitting and fruitless yelling. Reduces difficulty of all other recipes",
-        			R.drawable.flipped_chef_hat, genericInstructions, genericIngredientsA));
-        	rightRecipes.add(1, new RecipeItem("Rice and Beef",
-        			"Awesome food inspired by Microsoft cafeterias and good code",
-        			R.drawable.rice_and_chopsticks, genericInstructions, genericIngredientsB));
-        	rightRecipes.add(2, new RecipeItem("Something amazing",
-        			"Trust us, we know what we're doing this time.",
-        			R.drawable.chef_hat, genericInstructions, genericIngredientsB));
         	
         	/* add to left and right lists */
         	leftList = (LinearLayout) rootView.findViewById(R.id.recipes_list_left);
         	rightList = (LinearLayout) rootView.findViewById(R.id.recipes_list_right);
         	
-        	LinearLayout.LayoutParams cardSpacing = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 
+        	cardSpacing = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
         			LinearLayout.LayoutParams.WRAP_CONTENT);
         	cardSpacing.setMargins(0, 0, 0, 20);
-        	
-        	/* Each view is assigned an integer id for OnClick identification. 
-        	 * In leftRecipes, ids range from 0 to leftRecipes.size() - 1
-        	 * In rightRecipes, ids range from leftRecipes.size() + 0 to leftRecipes.size() +  rightRecipes.size() - 1 */
-        	
-            for(int i = 0;i < leftRecipes.size();i++) {
-            	View cView = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_card_layout, container, false);
-    			TextView recipeTitle = (TextView) cView.findViewById(R.id.recipe_card_title);
-    			TextView recipeDescription = (TextView) cView.findViewById(R.id.recipe_card_description);
-    			ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
-    			recipeTitle.setText(leftRecipes.get(i).title);
-    			recipeDescription.setText(leftRecipes.get(i).description);
-    			recipeImage.setImageResource(leftRecipes.get(i).image);
-    			cView.setLayoutParams(cardSpacing);
-    			cView.setId(i);
-    			cView.setOnClickListener(this);
-    			leftList.addView(cView);
-            }
-            for(int i = 0;i < rightRecipes.size();i++) {
-            	View cView = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_card_layout, container, false);
-    			TextView recipeTitle = (TextView) cView.findViewById(R.id.recipe_card_title);
-    			TextView recipeDescription = (TextView) cView.findViewById(R.id.recipe_card_description);
-    			ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
-    			recipeTitle.setText(rightRecipes.get(i).title);
-    			recipeDescription.setText(rightRecipes.get(i).description);
-    			recipeImage.setImageResource(rightRecipes.get(i).image);
-    			cView.setLayoutParams(cardSpacing);
-    			cView.setId(i + leftRecipes.size());
-    			cView.setOnClickListener(this);
-    			rightList.addView(cView);
-            }
-			
             return rootView;
         }
+
+		/*
+		 * On resume: refresh list of recipes
+		 */
+		@Override
+		public void onResume() {
+			super.onResume();
+			// get matching recipes
+			if(FridgeFragment.fridgeListChanged) {
+				ArrayList<Integer> foodIds = new ArrayList<Integer>();
+				for (FoodItem item : MainActivity.dataSource.getAllFoods()) foodIds.add(item.id);
+				RecipesLookupTask requestTask = new RecipesLookupTask();
+
+				requestTask.host = this;
+				requestTask.execute(foodIds);
+				FridgeFragment.fridgeListChanged = false;
+			}
+		}
+
+		public void refreshListView() {
+			leftList.removeAllViews();
+			rightList.removeAllViews();
+			/* Each view is assigned an integer id for OnClick identification.
+        	 * In leftRecipes, ids range from 0 to leftRecipes.size() - 1
+        	 * In rightRecipes, ids range from leftRecipes.size() + 0 to leftRecipes.size() +  rightRecipes.size() - 1 */
+			for(int i = 0;i < leftRecipes.size();i++) {
+				View cView = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_card_layout, recipesContainer, false);
+				TextView recipeTitle = (TextView) cView.findViewById(R.id.recipe_card_title);
+				TextView recipeDescription = (TextView) cView.findViewById(R.id.recipe_card_description);
+				ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
+				recipeTitle.setText(leftRecipes.get(i).title);
+				recipeDescription.setText(leftRecipes.get(i).description);
+				if(leftRecipes.get(i).image > 0)
+					recipeImage.setImageResource(leftRecipes.get(i).image);
+				else
+					recipeImage.setImageBitmap(leftRecipes.get(i).imageBitmap);
+				cView.setLayoutParams(cardSpacing);
+				cView.setId(i);
+				cView.setOnClickListener(this);
+				leftList.addView(cView);
+			}
+			for(int i = 0;i < rightRecipes.size();i++) {
+				View cView = LayoutInflater.from(getActivity()).inflate(R.layout.recipe_card_layout, recipesContainer, false);
+				TextView recipeTitle = (TextView) cView.findViewById(R.id.recipe_card_title);
+				TextView recipeDescription = (TextView) cView.findViewById(R.id.recipe_card_description);
+				ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
+				recipeTitle.setText(rightRecipes.get(i).title);
+				recipeDescription.setText(rightRecipes.get(i).description);
+				if(rightRecipes.get(i).image > 0)
+					recipeImage.setImageResource(rightRecipes.get(i).image);
+				else
+					recipeImage.setImageBitmap(rightRecipes.get(i).imageBitmap);
+				cView.setLayoutParams(cardSpacing);
+				cView.setId(i + leftRecipes.size());
+				cView.setOnClickListener(this);
+				rightList.addView(cView);
+			}
+		}
+
+		public void updateListView(List<RecipeItem> items){
+			boolean side = true;
+			leftRecipes.clear();
+			rightRecipes.clear();
+			for(RecipeItem recipe : items){
+				if(side) leftRecipes.add(recipe);
+				else rightRecipes.add(recipe);
+				side = !side;
+			}
+
+
+			refreshListView();
+		}
 
 		@Override
 		public void onClick(View v) {
 			int id = v.getId();
 			if(id < leftRecipes.size()) {
 				RecipeDetailsActivity.RECIPE = leftRecipes.get(id);
+				Intent intent = new Intent(getActivity(), RecipeDetailsActivity.class);
+				startActivity(intent);
 			} else {
 				RecipeDetailsActivity.RECIPE = rightRecipes.get(id - leftRecipes.size());
                 Intent intent = new Intent(getActivity(), RecipeDetailsActivity.class);
                 startActivity(intent);
 			}
-			
 		}
         
     }

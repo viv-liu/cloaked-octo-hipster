@@ -47,8 +47,8 @@ public class FridgeItemAdapter extends ArrayAdapter<FoodItem> implements Filtera
 		mContext = c;
 		
 		FOOD_GROUPS_AS_FRIDGEFOODITEMS = new ArrayList<FoodItem>();
-		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true, 0, "none"));
-		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true, 0, "none"));
+		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(-1, FoodGroup.PRODUCE.toString(), FoodGroup.PRODUCE, R.drawable.chef_hat, true, 0, "none"));
+		FOOD_GROUPS_AS_FRIDGEFOODITEMS.add(new FoodItem(-1, FoodGroup.PROTEIN.toString(), FoodGroup.PROTEIN, R.drawable.chef_hat, true, 0, "none"));
 		
 		mOriginalFoodList = fl;
 		mFilteringList = fl;

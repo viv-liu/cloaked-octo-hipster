@@ -31,12 +31,9 @@ public class NameLookupTask extends AsyncTask<String, String, String>{
 			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				response.getEntity().writeTo(out);
-				
-				
 				return out.toString();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -44,6 +41,8 @@ public class NameLookupTask extends AsyncTask<String, String, String>{
 	
 	protected void onPostExecute(String result) {
 		String[] foodNames;
+		String foodName;
+		int foodId, idNameSplitPoint;
 		ArrayList<FoodItem> foods = new ArrayList<FoodItem>();
 		
 		if(result.indexOf("No result") != -1){
@@ -53,7 +52,11 @@ public class NameLookupTask extends AsyncTask<String, String, String>{
 		
 		foodNames = result.split("\n");
 		for(int i = 0;i < foodNames.length;i++) {
-			foods.add(new FoodItem(foodNames[i], FoodGroup.PRODUCE, R.drawable.chef_hat, false, 2.4f, "units"));
+			if(foodNames[i].length() < 1) continue;
+			idNameSplitPoint = foodNames[i].indexOf(',');
+			foodId = Integer.parseInt(foodNames[i].substring(0, idNameSplitPoint));
+			foodName = foodNames[i].substring(idNameSplitPoint + 1);
+			foods.add(new FoodItem(foodId, foodName, FoodGroup.PRODUCE, R.drawable.chef_hat, false, 2.4f, "units"));
 		}
 		host.updateListView(foods);
 	}

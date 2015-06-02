@@ -34,8 +34,12 @@ public class RecipeDetailsActivity extends Activity {
     	
     	tv_title = (TextView) findViewById(R.id.textView1);
     	tv_title.setText(RECIPE.title);
-    	iv_foodPic = (ImageView) findViewById(R.id.imageView1);
-    	iv_foodPic.setImageResource(RECIPE.image);
+		iv_foodPic = (ImageView) findViewById(R.id.imageView1);
+		if(RECIPE.image > 0) {
+			iv_foodPic.setImageResource(RECIPE.image);
+		} else {
+			iv_foodPic.setImageBitmap(RECIPE.imageBitmap);
+		}
     	tl_ingredients = (TableLayout) findViewById(R.id.tableLayout1);
     	fillIngredientsTable(tl_ingredients, RECIPE.ingredients);
     	directionCardAdapter = new DirectionCardAdapter(this, RECIPE.directions);

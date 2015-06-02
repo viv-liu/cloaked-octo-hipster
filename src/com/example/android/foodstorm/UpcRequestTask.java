@@ -29,10 +29,8 @@ public class UpcRequestTask extends AsyncTask<String, String, String>{
 				return out.toString();
 			}
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
