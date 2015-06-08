@@ -118,8 +118,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
+        /* position 0 = list of foods
+           position 1 = recipes. Need to refresh recipes list on change
+         */
+		int position = tab.getPosition();
+		if(position == 1 && FridgeFragment.fridgeListChanged) {
+			RecipesFragment recipes = (RecipesFragment)mAppSectionsPagerAdapter.getItem(position);
+			recipes.refreshRecipes();
+		}
+        mViewPager.setCurrentItem(position);
     }
     
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -142,18 +149,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
-    
-    public void onActivityResult(int requestCode, int resultCode, Intent intent){
-    	/*IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-    	if(scanResult != null){
-    		String code = scanResult.getContents();
-    		Toast.makeText(getApplicationContext(), code, Toast.LENGTH_LONG).show();
-    		UpcRequestTask requestTask = new UpcRequestTask();
-    		requestTask.appContext = getApplicationContext();
-    		requestTask.execute(code);
-    		
-    	} else Toast.makeText(getApplicationContext(), "Barcode scan failed", Toast.LENGTH_SHORT).show();*/
-    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
@@ -164,22 +159,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+		private FridgeFragment fridge = null;
+		private RecipesFragment recipes = null;
 
         @Override
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return new FridgeFragment();
-
-                default:
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new RecipesFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(RecipesFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
+					if(fridge == null)
+						fridge = new FridgeFragment();
+                    return fridge;
+                case 1:
+					if(recipes == null)
+						recipes = new RecipesFragment();
+					return recipes;
+				default:
+					return null;
             }
         }
 
@@ -208,7 +203,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         	setHasOptionsMenu(true);
         	
         	dataSource = MainActivity.dataSource;
-        	fridgeList = dataSource.getAllFoods();
+			fridgeList = dataSource.getAllFoods();
+			fridgeListChanged = true;
         	
         	OnClickListener itemClickListener = new OnClickListener() {
 				@Override
@@ -227,11 +223,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             View rootView = inflater.inflate(R.layout.fragment_section_fridge, container, false);
             return rootView;
         }
-        
+
         public void onResume() {
         	super.onResume();
         	fridgeList = dataSource.getAllFoods();
-			fridgeListChanged = true;
         	adapter.notifyDataSetChanged();
         }
         
@@ -250,7 +245,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	            @Override
     	            public boolean onQueryTextChange(String newText) 
     	            {
-    	                // this is your adapter that will be filtered
     	                adapter.getFilter().filter(newText);
     	                System.out.println("on text chnge text: "+newText);
     	                return true;
@@ -258,7 +252,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     	            @Override
     	            public boolean onQueryTextSubmit(String query) 
     	            {
-    	                // this is your adapter that will be filtered
     	                adapter.getFilter().filter(query);
     	                System.out.println("on query submit: "+query);
     	                return true;
@@ -286,20 +279,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
+     * The recipes tab in the main activity
+	 * Displays recipe cards in a two-column layout
      */
     public static class RecipesFragment extends Fragment implements OnClickListener {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
-        
-        //private GridView cards;
+
+		/* have two LinearLayouts side by side inside a ScrollView
+		   ListViews are an option, but linked scrolling is troublesome.
+		 */
         private LinearLayout leftList, rightList;
-        ArrayList<RecipeItem> leftRecipes;
-        ArrayList<RecipeItem> rightRecipes;
+        ArrayList<RecipeItem> leftRecipes, rightRecipes;
 		ViewGroup recipesContainer = null;
 		LinearLayout.LayoutParams cardSpacing = null;
-        // Vars to help with linked scrolling
-        View clickSource, touchSource;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -322,24 +315,33 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             return rootView;
         }
 
-		/*
-		 * On resume: refresh list of recipes
+		/**
+		 * Fetch list of recipes from server, using
+		 * available food list from SQLite
+		 */
+		public void refreshRecipes() {
+			ArrayList<Integer> foodIds = new ArrayList<Integer>();
+			for (FoodItem item : MainActivity.dataSource.getAllFoods()) foodIds.add(item.id);
+			RecipesLookupTask requestTask = new RecipesLookupTask();
+
+			requestTask.host = this;
+			requestTask.execute(foodIds);
+			FridgeFragment.fridgeListChanged = false;
+		}
+
+		/**
+		 * On resume: refresh list of recipes if list of foods has changed
 		 */
 		@Override
 		public void onResume() {
 			super.onResume();
-			// get matching recipes
-			if(FridgeFragment.fridgeListChanged) {
-				ArrayList<Integer> foodIds = new ArrayList<Integer>();
-				for (FoodItem item : MainActivity.dataSource.getAllFoods()) foodIds.add(item.id);
-				RecipesLookupTask requestTask = new RecipesLookupTask();
-
-				requestTask.host = this;
-				requestTask.execute(foodIds);
-				FridgeFragment.fridgeListChanged = false;
-			}
+			if(FridgeFragment.fridgeListChanged)
+				refreshRecipes();
 		}
 
+		/**
+		 * Re-generate displayed views
+		 */
 		public void refreshListView() {
 			leftList.removeAllViews();
 			rightList.removeAllViews();
@@ -380,10 +382,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 		}
 
+		/* update this fragment's internal list of recipes
+		   this is called by the async network task (RecipesLookupTask)
+		   after a list has been retrieved
+		 */
 		public void updateListView(List<RecipeItem> items){
 			boolean side = true;
 			leftRecipes.clear();
 			rightRecipes.clear();
+			/* for now, assign an equal number of recipes to
+			   each side. In the future, might want to do som
+			   smarter layout
+			 */
 			for(RecipeItem recipe : items){
 				if(side) leftRecipes.add(recipe);
 				else rightRecipes.add(recipe);
@@ -395,6 +405,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		}
 
 		@Override
+		/**
+		 * Handle clicks, by starting the recipe view activity (RecipeDetailsActivity)
+		 * with the appropriate recipe
+		 */
 		public void onClick(View v) {
 			int id = v.getId();
 			if(id < leftRecipes.size()) {
