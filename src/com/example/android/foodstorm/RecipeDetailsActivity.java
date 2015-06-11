@@ -4,13 +4,18 @@ import java.util.List;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -18,40 +23,50 @@ import android.widget.TextView;
 public class RecipeDetailsActivity extends Activity {
 
 	public static RecipeItem RECIPE;
-	
+
 	private LinearLayout linear_layout;
 	private DirectionCardAdapter directionCardAdapter;
 	private TextView tv_title;
 	private ImageView iv_foodPic;
 	private TableLayout tl_ingredients;
+	private ObservableScrollView detailsScrollView;
+	private ScrollView imageScrollView;
+
+	private RecipeDetailsScrollListener scrollListener;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     	setContentView(R.layout.activity_recipe_details);
     	
     	tv_title = (TextView) findViewById(R.id.textView1);
+		tl_ingredients = (TableLayout) findViewById(R.id.tableLayout1);
+		linear_layout = (LinearLayout) findViewById(R.id.linear_layout);
+		detailsScrollView = (ObservableScrollView) findViewById(R.id.recipeDetailsScrollView);
+		imageScrollView = (ScrollView) findViewById(R.id.recipeDetailsImageScroller);
+
+		directionCardAdapter = new DirectionCardAdapter(this, RECIPE.directions);
+		fillIngredientsTable(tl_ingredients, RECIPE.ingredients);
     	tv_title.setText(RECIPE.title);
+
 		iv_foodPic = (ImageView) findViewById(R.id.imageView1);
 		if(RECIPE.image > 0) {
 			iv_foodPic.setImageResource(RECIPE.image);
 		} else {
 			iv_foodPic.setImageBitmap(RECIPE.imageBitmap);
 		}
-    	tl_ingredients = (TableLayout) findViewById(R.id.tableLayout1);
-    	fillIngredientsTable(tl_ingredients, RECIPE.ingredients);
-    	directionCardAdapter = new DirectionCardAdapter(this, RECIPE.directions);
-    	linear_layout = (LinearLayout) findViewById(R.id.linear_layout);
-    	
+
+		scrollListener = new RecipeDetailsScrollListener(imageScrollView);
+		detailsScrollView.setScrollViewListener(scrollListener);
+
     	for(int i = 0; i < RECIPE.directions.size(); i++) {
     		linear_layout.addView(directionCardAdapter.getView(i, null, linear_layout));
     	}
 	}
 	
 	private void fillIngredientsTable(TableLayout table, List<FoodItem> sortedIngredients) {
-		 
         TableRow row;
         TextView tv1, tv2;
         //Converting to dip unit
@@ -94,6 +109,15 @@ public class RecipeDetailsActivity extends Activity {
                     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
  
         }
+	}
+	private class RecipeDetailsScrollListener implements ScrollViewListener {
+		private ScrollView target;
+		public RecipeDetailsScrollListener(ScrollView tgt){
+			target = tgt;
+		}
+		public void onScrollChanged(int x, int y, int oldx, int oldy){
+			target.scrollTo(x, y/2);
+		}
 	}
 }
 

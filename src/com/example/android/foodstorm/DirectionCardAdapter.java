@@ -52,7 +52,7 @@ public class DirectionCardAdapter extends BaseAdapter {
 			cardLayoutParams.setMargins(10, 10, 10, 5);
 			cView.setLayoutParams(cardLayoutParams);
 		}*/
-		holder.directionIndex.setText(String.valueOf(idx));
+		holder.directionIndex.setText(String.valueOf(idx + 1));
 		holder.directionDescription.setText(directions.get(idx));
 		return cView;
 	}
