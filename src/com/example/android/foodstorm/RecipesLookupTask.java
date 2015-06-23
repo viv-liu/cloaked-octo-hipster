@@ -76,6 +76,7 @@ public class RecipesLookupTask extends AsyncTask<List<Integer>, String, String>{
 				recipeImage = temp[0];
 				recipe = new RecipeItem(recipeTitle, recipeDescription);
 				recipe.id = recipeId;
+				recipe.image = R.drawable.chef_hat;
 
 				recipe.directions = new ArrayList<String>();
 				temp = temp[1].split("<end_instructions>");
