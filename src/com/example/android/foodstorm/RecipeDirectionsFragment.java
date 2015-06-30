@@ -27,14 +27,14 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 	private Sensor sensor;
 	private int selectedDirectionIndex;
 	private ArrayList<View> directionViews;
-	private ScrollView directionsScrollView;
+	private ObservableScrollView directionsScrollView;
 
 	private TextView debugTextView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_recipe_directions, container, false);
-		directionsScrollView = (ScrollView)rootView.findViewById(R.id.directions_scroll_view);
+		directionsScrollView = (ObservableScrollView)rootView.findViewById(R.id.directions_scroll_view);
 		debugTextView = (TextView)rootView.findViewById(R.id.recipe_directions_debug);
 
 		/* Initialize proximity sensor, to let the user scroll without
@@ -52,6 +52,7 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 			directionViews.add(directionView);
 			linear_layout.addView(directionView);
 		}
+		directionsScrollView.setScrollViewListener(new DirectionsScrollView());
 		return rootView;
 	}
 
@@ -98,6 +99,25 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 		} else {
 			String debugOutput = "Proximity far";
 			debugTextView.setText(debugOutput.toCharArray(), 0, debugOutput.length());
+		}
+	}
+
+	private class DirectionsScrollView implements ScrollViewListener {
+		public void onScrollChanged(int x, int y, int oldx, int oldy) {
+			TextView directionText;
+			// give the current direction a blue background (and keep the rest white)
+			for(View view : directionViews){
+				view.getBackground().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.DARKEN);
+				directionText = (TextView)view.findViewById(R.id.direction_card_description);
+				directionText.setTextColor(Color.parseColor("#090909")); // should match text view in direction card layout
+			}
+			for(View view : directionViews) {
+				if(y >= view.getTop() && y <= view.getBottom()) {
+					view.getBackground().setColorFilter(Color.parseColor("#2FB6F4"), PorterDuff.Mode.DARKEN);
+					directionText = (TextView)view.findViewById(R.id.direction_card_description);
+					directionText.setTextColor(Color.parseColor("#FFFFFF"));    // white on blue
+				}
+			}
 		}
 	}
 }
