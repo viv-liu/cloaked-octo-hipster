@@ -105,6 +105,7 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 	private class DirectionsScrollView implements ScrollViewListener {
 		public void onScrollChanged(int x, int y, int oldx, int oldy) {
 			TextView directionText;
+			int currentDirection = 0;
 			// give the current direction a blue background (and keep the rest white)
 			for(View view : directionViews){
 				view.getBackground().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.DARKEN);
@@ -112,7 +113,9 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 				directionText.setTextColor(Color.parseColor("#090909")); // should match text view in direction card layout
 			}
 			for(View view : directionViews) {
+				currentDirection++;
 				if(y >= view.getTop() && y <= view.getBottom()) {
+					selectedDirectionIndex = currentDirection - 1;
 					view.getBackground().setColorFilter(Color.parseColor("#2FB6F4"), PorterDuff.Mode.DARKEN);
 					directionText = (TextView)view.findViewById(R.id.direction_card_description);
 					directionText.setTextColor(Color.parseColor("#FFFFFF"));    // white on blue
