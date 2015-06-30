@@ -47,68 +47,6 @@ public class RecipeDetailsActivity extends FragmentActivity {
 
         mIndicator = (IconPageIndicator)findViewById(R.id.indicator);
         mIndicator.setViewPager(mPager);
-    	/*tv_title = (TextView) findViewById(R.id.textView1);
-    	tv_title.setText(RECIPE.title);
-		iv_foodPic = (ImageView) findViewById(R.id.imageView1);
-		if(RECIPE.image > 0) {
-			iv_foodPic.setImageResource(RECIPE.image);
-		} else {
-			iv_foodPic.setImageBitmap(RECIPE.imageBitmap);
-		}
-    	tl_ingredients = (TableLayout) findViewById(R.id.tableLayout1);
-    	fillIngredientsTable(tl_ingredients, RECIPE.ingredients);
-    	directionCardAdapter = new DirectionCardAdapter(this, RECIPE.directions);
-    	linear_layout = (LinearLayout) findViewById(R.id.linear_layout);
-    	
-    	for(int i = 0; i < RECIPE.directions.size(); i++) {
-    		linear_layout.addView(directionCardAdapter.getView(i, null, linear_layout));
-    	}
-	}
-	
-	private void fillIngredientsTable(TableLayout table, List<FoodItem> sortedIngredients) {
-		 
-        TableRow row;
-        TextView tv1, tv2;
-        //Converting to dip unit
-        int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                (float) 1, getResources().getDisplayMetrics());
- 
-        for (int i = 0; i < sortedIngredients.size(); i++) {
-            row = new TableRow(this);
-            
-            // TODO: not sure if these params do anything noticeable
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
-            params.setMargins(20*dip, 1, 20*dip, 1);
-            row.setLayoutParams(params);
-            
-            if(i%2 == 0) {
-            	//row.setBackgroundColor(Color.LTGRAY);
-            } else {
-            	row.setBackgroundColor(Color.LTGRAY);
-            }
-            tv1 = new TextView(this);
-            tv2 = new TextView(this);
- 
-            tv1.setText(sortedIngredients.get(i).name);
-            tv2.setText(String.valueOf(sortedIngredients.get(i).quantity) + " " 
-            						 + sortedIngredients.get(i).units);
-
-            tv1.setTypeface(null, 1);
-            tv2.setTypeface(null, 1);
- 
-            tv1.setTextSize(15);
-            tv2.setTextSize(15);
-
-            tv1.setPadding(20*dip, 10*dip, 10*dip, 10*dip);
-            tv2.setPadding(10*dip, 10*dip, 20*dip, 10*dip);
-            
-            row.addView(tv1);
-            row.addView(tv2);
- 
-            table.addView(row, new TableLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
- 
-        }*/
 	}
 }
 

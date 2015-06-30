@@ -1,5 +1,7 @@
 package com.example.android.foodstorm;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -65,6 +67,8 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 
 	private void scrollToNextDirection(){
 		View target;
+		TextView directionText;
+
 		if(selectedDirectionIndex + 1 >= directionViews.size()) return;
 		selectedDirectionIndex++;
 		target = directionViews.get(selectedDirectionIndex);
@@ -73,6 +77,15 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 		* really hope possibly getting clipped by the ScrollView doesn't
 		* screw up getTop. */
 		directionsScrollView.scrollTo(0, target.getTop());
+		// give the current direction a blue background (and keep the rest white)
+		for(View view : directionViews){
+			view.getBackground().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.DARKEN);
+			directionText = (TextView)view.findViewById(R.id.direction_card_description);
+			directionText.setTextColor(Color.parseColor("#090909")); // should match text view in direction card layout
+		}
+		target.getBackground().setColorFilter(Color.parseColor("#2FB6F4"), PorterDuff.Mode.DARKEN);
+		directionText = (TextView)target.findViewById(R.id.direction_card_description);
+		directionText.setTextColor(Color.parseColor("#FFFFFF"));    // white on blue
 	}
 
 	public void onAccuracyChanged(Sensor sensor, int accuracy){}
