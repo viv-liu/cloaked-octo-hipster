@@ -37,14 +37,15 @@ public class DirectionCardAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int idx, View cView, ViewGroup parent) {
-		ViewHolder holder;
+		DirectionViewHolder holder;
 		
-		if(cView != null) holder = (ViewHolder) cView.getTag();
+		if(cView != null) holder = (DirectionViewHolder) cView.getTag();
 		else {
 			cView = LayoutInflater.from(context).inflate(R.layout.direction_card_layout, parent, false);
-			holder = new ViewHolder();
+			holder = new DirectionViewHolder();
 			holder.directionIndex = (TextView) cView.findViewById(R.id.direction_card_index);
 			holder.directionDescription = (TextView) cView.findViewById(R.id.direction_card_description);
+			holder.directionId = idx;
 			cView.setTag(holder);
 		}
 		/*if(idx == 0) {
@@ -55,10 +56,5 @@ public class DirectionCardAdapter extends BaseAdapter {
 		holder.directionIndex.setText(String.valueOf(idx + 1));
 		holder.directionDescription.setText(directions.get(idx));
 		return cView;
-	}
-	
-	private static class ViewHolder {
-		private TextView directionIndex;
-		private TextView directionDescription;
 	}
 }

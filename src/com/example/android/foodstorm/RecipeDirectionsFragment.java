@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class RecipeDirectionsFragment extends Fragment implements SensorEventListener {
+public class RecipeDirectionsFragment extends Fragment implements SensorEventListener, View.OnClickListener {
 	private LinearLayout linear_layout;
 	private DirectionCardAdapter directionCardAdapter;
 
@@ -31,6 +31,12 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 
 	private TextView debugTextView;
 
+	/* onCreateView:
+	   - init class view variables
+	   - init proximity sensor
+	   - create direction card views
+	   - init scroll view listener (to infer active direction from scroll position)
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_recipe_directions, container, false);
@@ -38,8 +44,7 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 		debugTextView = (TextView)rootView.findViewById(R.id.recipe_directions_debug);
 
 		/* Initialize proximity sensor, to let the user scroll without
-		   touching the screen (i.e., when hands messy with cooking)
-		 */
+		   touching the screen (i.e., when hands messy with cooking) */
 		sensorManager = (SensorManager) getActivity().getSystemService(getActivity().SENSOR_SERVICE);
 		sensor = sensorManager.getDefaultSensor(sensor.TYPE_PROXIMITY);
 		selectedDirectionIndex = 0;
@@ -49,6 +54,7 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 		linear_layout = (LinearLayout) rootView.findViewById(R.id.linear_layout);
 		for (int i = 0; i < RecipeFragmentAdapter.RECIPE.directions.size(); i++) {
 			View directionView = directionCardAdapter.getView(i, null, linear_layout);
+			directionView.setOnClickListener(this);
 			directionViews.add(directionView);
 			linear_layout.addView(directionView);
 		}
@@ -67,26 +73,29 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 	}
 
 	private void scrollToNextDirection(){
-		View target;
-		TextView directionText;
-
 		if(selectedDirectionIndex + 1 >= directionViews.size()) return;
 		selectedDirectionIndex++;
-		target = directionViews.get(selectedDirectionIndex);
+		highlightDirection(selectedDirectionIndex);
 
-		/* get view position relative to parent, then scroll there
-		* really hope possibly getting clipped by the ScrollView doesn't
-		* screw up getTop. */
+		View target = directionViews.get(selectedDirectionIndex);
 		directionsScrollView.scrollTo(0, target.getTop());
-		// give the current direction a blue background (and keep the rest white)
+	}
+
+	private void highlightDirection(int index){
+		TextView directionText;
+		int i = 0;
 		for(View view : directionViews){
-			view.getBackground().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.DARKEN);
-			directionText = (TextView)view.findViewById(R.id.direction_card_description);
-			directionText.setTextColor(Color.parseColor("#090909")); // should match text view in direction card layout
+			if(i == index){
+				view.getBackground().setColorFilter(Color.parseColor("#2FB6F4"), PorterDuff.Mode.DARKEN);
+				directionText = (TextView)view.findViewById(R.id.direction_card_description);
+				directionText.setTextColor(Color.parseColor("#FFFFFF"));
+			} else {
+				view.getBackground().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.DARKEN);
+				directionText = (TextView) view.findViewById(R.id.direction_card_description);
+				directionText.setTextColor(Color.parseColor("#999999")); // should match text view in direction card layout
+			}
+			i++;
 		}
-		target.getBackground().setColorFilter(Color.parseColor("#2FB6F4"), PorterDuff.Mode.DARKEN);
-		directionText = (TextView)target.findViewById(R.id.direction_card_description);
-		directionText.setTextColor(Color.parseColor("#FFFFFF"));    // white on blue
 	}
 
 	public void onAccuracyChanged(Sensor sensor, int accuracy){}
@@ -102,23 +111,26 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 		}
 	}
 
+	/* handles card clicks */
+	public void onClick(View v){
+		DirectionViewHolder holder = (DirectionViewHolder)v.getTag();
+		selectedDirectionIndex = holder.directionId;
+		highlightDirection(selectedDirectionIndex);
+	}
+
+	/* Hooks onto scroll view, updating the currently selected direction
+	   whenever scrolling happens
+	 */
 	private class DirectionsScrollView implements ScrollViewListener {
 		public void onScrollChanged(int x, int y, int oldx, int oldy) {
 			TextView directionText;
 			int currentDirection = 0;
-			// give the current direction a blue background (and keep the rest white)
-			for(View view : directionViews){
-				view.getBackground().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.DARKEN);
-				directionText = (TextView)view.findViewById(R.id.direction_card_description);
-				directionText.setTextColor(Color.parseColor("#090909")); // should match text view in direction card layout
-			}
 			for(View view : directionViews) {
 				currentDirection++;
 				if(y >= view.getTop() && y <= view.getBottom()) {
 					selectedDirectionIndex = currentDirection - 1;
-					view.getBackground().setColorFilter(Color.parseColor("#2FB6F4"), PorterDuff.Mode.DARKEN);
-					directionText = (TextView)view.findViewById(R.id.direction_card_description);
-					directionText.setTextColor(Color.parseColor("#FFFFFF"));    // white on blue
+					highlightDirection(selectedDirectionIndex);
+					break; // shouldn't highlight more than one direction
 				}
 			}
 		}
