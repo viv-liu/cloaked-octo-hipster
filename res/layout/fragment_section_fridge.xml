@@ -14,24 +14,47 @@
   limitations under the License. -->
 
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
         >
-	    <Button
-	        android:id="@+id/fridge_add"
-	        android:text="Add food!"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        />
+
 	    <ListView
 	        android:id="@+id/lv_fridge"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" >
 	    </ListView>
+
     </LinearLayout>
-</FrameLayout>
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        fab:fab_addButtonColorNormal="@color/foodstorm_orange"
+        fab:fab_addButtonColorPressed="@color/foodstorm_orange_light"
+        fab:fab_addButtonPlusIconColor="@color/white"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fridge_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_title="Type food name"
+            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_icon="@drawable/cupcake"/>
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+</RelativeLayout>

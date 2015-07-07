@@ -261,7 +261,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         public void onStart() {
         	super.onStart();
-        	Button fridge_add = (Button)getActivity().findViewById(R.id.fridge_add);
+        	View fridge_add = getActivity().findViewById(R.id.fridge_add);
         	OnClickListener addClickListener = new OnClickListener() {
         		public void onClick(View v) {
         			Intent intent = new Intent(getActivity().getApplicationContext(), AddActivity.class);
