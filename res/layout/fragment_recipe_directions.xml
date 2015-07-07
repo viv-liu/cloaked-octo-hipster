@@ -16,6 +16,12 @@
 	     android:layout_margin="10dp"
 	     android:textAppearance="?android:attr/textAppearanceLarge" />
 
+	<Switch
+	    android:id="@+id/switch1"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="No-touch mode" />
+
 	<TextView
 		android:id="@+id/recipe_directions_debug"
 		android:layout_width="wrap_content"

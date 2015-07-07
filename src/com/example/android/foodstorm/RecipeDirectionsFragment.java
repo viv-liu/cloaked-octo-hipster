@@ -1,8 +1,8 @@
 package com.example.android.foodstorm;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,14 +11,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class RecipeDirectionsFragment extends Fragment implements SensorEventListener, View.OnClickListener {
+public class RecipeDirectionsFragment extends Fragment implements SensorEventListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 	private LinearLayout linear_layout;
 	private DirectionCardAdapter directionCardAdapter;
 
@@ -29,6 +32,7 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 	private ArrayList<View> directionViews;
 	private ObservableScrollView directionsScrollView;
 
+	private Switch noTouchSwitch;
 	private TextView debugTextView;
 
 	/* onCreateView:
@@ -45,10 +49,14 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 
 		/* Initialize proximity sensor, to let the user scroll without
 		   touching the screen (i.e., when hands messy with cooking) */
-		sensorManager = (SensorManager) getActivity().getSystemService(getActivity().SENSOR_SERVICE);
-		sensor = sensorManager.getDefaultSensor(sensor.TYPE_PROXIMITY);
+		sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+		sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 		selectedDirectionIndex = 0;
 
+		noTouchSwitch = (Switch) rootView.findViewById(R.id.switch1);
+		noTouchSwitch.setOnCheckedChangeListener(this);
+		noTouchSwitch.setChecked(true);
+		
 		directionViews = new ArrayList<View>();
 		directionCardAdapter = new DirectionCardAdapter(this.getActivity(), RecipeFragmentAdapter.RECIPE.directions);
 		linear_layout = (LinearLayout) rootView.findViewById(R.id.linear_layout);
@@ -64,7 +72,7 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 
 	public void onResume() {
 		super.onResume();
-		sensorManager.registerListener(this, sensor, sensorManager.SENSOR_DELAY_NORMAL);
+		sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
 	public void onPause() {
@@ -79,6 +87,10 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 
 		View target = directionViews.get(selectedDirectionIndex);
 		directionsScrollView.scrollTo(0, target.getTop());
+		/*if(target.getTop() < directionsScrollView.getHeight()/2) {
+			return;
+		}
+		directionsScrollView.scrollTo(0, target.getTop() - directionsScrollView.getHeight()/2);*/
 	}
 
 	private void highlightDirection(int index){
@@ -123,7 +135,6 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 	 */
 	private class DirectionsScrollView implements ScrollViewListener {
 		public void onScrollChanged(int x, int y, int oldx, int oldy) {
-			TextView directionText;
 			int currentDirection = 0;
 			for(View view : directionViews) {
 				currentDirection++;
@@ -133,6 +144,19 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 					break; // shouldn't highlight more than one direction
 				}
 			}
+		}
+	}
+
+	/*
+	 * Switch turns on and off proximity sensor listener.
+	 * @see android.widget.CompoundButton.OnCheckedChangeListener#onCheckedChanged(android.widget.CompoundButton, boolean)
+	 */
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		if(isChecked) {
+			sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+		} else {
+			sensorManager.unregisterListener(this);
 		}
 	}
 }
