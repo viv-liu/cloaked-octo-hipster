@@ -43,6 +43,9 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -111,6 +114,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         .setIcon(R.drawable.chef_hat)
                         .setTabListener(this));
     }
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		String barcode;
+		if(resultCode == RESULT_OK){
+			IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+			barcode = scanResult.getContents();
+			Toast.makeText(this, "Getting results for barcode  " + barcode, Toast.LENGTH_LONG).show();
+
+			BarcodeLookupTask requestTask = new BarcodeLookupTask();
+			requestTask.host = this;
+			requestTask.execute(barcode);
+		} else if(resultCode == RESULT_CANCELED){
+			Toast.makeText(this, "scan cancelled", Toast.LENGTH_SHORT).show();
+		}
+	}
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -261,6 +279,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         public void onStart() {
         	super.onStart();
+
+			// Register click handlers for floating action button menu
         	View fridge_add = getActivity().findViewById(R.id.fridge_add);
         	OnClickListener addClickListener = new OnClickListener() {
         		public void onClick(View v) {
@@ -269,13 +289,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         		}
         	};
         	fridge_add.setOnClickListener(addClickListener);
-        	
+
+			View fridge_add_barcode = getActivity().findViewById(R.id.fridge_add_barcode);
+			OnClickListener addBarcodeClickListener = new OnClickListener() {
+				public void onClick(View v){
+					IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
+					intentIntegrator.initiateScan();
+				}
+			};
+			fridge_add_barcode.setOnClickListener(addBarcodeClickListener);
         	
         	ListView lv_produce = (ListView)getActivity().findViewById(R.id.lv_fridge);
             lv_produce.setAdapter(adapter);
             lv_produce.setTextFilterEnabled(true); // for search filtering
         }
-        
     }
 
     /**

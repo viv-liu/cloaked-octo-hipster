@@ -52,7 +52,7 @@ public class RecipeIngredientsFragment extends Fragment{
             
             // TODO: not sure if these params do anything noticeable
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
-            params.setMargins(20 * dip, 1, 20 * dip, 1);
+            params.setMargins(20*dip, 1, 20*dip, 1);
             row.setLayoutParams(params);
             
             if(i%2 == 0) {
@@ -67,22 +67,14 @@ public class RecipeIngredientsFragment extends Fragment{
             tv2.setText(String.valueOf(sortedIngredients.get(i).quantity) + " " 
             						 + sortedIngredients.get(i).units);
 
-            /*LinearLayout.LayoutParams column1Params = new LinearLayout.LayoutParams(
-                    0, LayoutParams.MATCH_PARENT, 2.0f);
-            LinearLayout.LayoutParams column2Params = new LinearLayout.LayoutParams(
-                    0, LayoutParams.MATCH_PARENT, 1.0f);
-            tv1.setLayoutParams(column1Params);
-            tv2.setLayoutParams(column2Params);*/
-
             tv1.setTypeface(null, 1);
             tv2.setTypeface(null, 1);
  
             tv1.setTextSize(15);
             tv2.setTextSize(15);
 
-            tv1.setPadding(10*dip, 10*dip, 10*dip, 10*dip);
+            tv1.setPadding(20*dip, 10*dip, 10*dip, 10*dip);
             tv2.setPadding(10*dip, 10*dip, 20*dip, 10*dip);
-            //tv1.setSingleLine(false);
             
             row.addView(tv1);
             row.addView(tv2);

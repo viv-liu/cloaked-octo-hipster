@@ -1,6 +1,5 @@
 package com.example.android.foodstorm;
 
-import com.example.android.foodstorm.R;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

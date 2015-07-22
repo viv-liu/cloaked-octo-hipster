@@ -9,7 +9,6 @@
 	     android:layout_height="wrap_content"
 	     android:text="Ingredients"
 	     android:layout_margin="10dp"
-         android:paddingTop="20dp"
 	     android:textAppearance="?android:attr/textAppearanceLarge" />
 	 
 	<TableLayout
@@ -17,7 +16,6 @@
          android:layout_width="match_parent"
          android:layout_height="wrap_content" 
          android:stretchColumns="0"
-         android:shrinkColumns="1"
          android:layout_margin="10dp"/>
 
 </LinearLayout>

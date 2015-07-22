@@ -12,7 +12,6 @@
             android:layout_height="wrap_content"
             android:text="Large Text"
             android:layout_margin="10dp"
-            android:paddingTop="20dp"
             android:textAppearance="?android:attr/textAppearanceLarge" />
     <ImageView
         android:id="@+id/imageView1"

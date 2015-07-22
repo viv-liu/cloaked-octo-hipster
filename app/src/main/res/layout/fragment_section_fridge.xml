@@ -56,5 +56,14 @@
             fab:fab_colorPressed="@color/white_pressed"
             fab:fab_icon="@drawable/cupcake"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fridge_add_barcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_title="Scan barcode"
+            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_icon="@drawable/cupcake"/>
+
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </RelativeLayout>
