@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,19 +46,14 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 //import com.google.zxing.integration.android.IntentIntegrator;
 //import com.google.zxing.integration.android.IntentResult;
@@ -78,16 +74,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      */
     ViewPager mViewPager;
 	public static FoodSQLiteHelper dataSource;
+	public static ImageLoader imageLoader = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 		dataSource = new FoodSQLiteHelper(this);
+		imageLoader = ImageLoader.getInstance();
+		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 
-        // Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.
-        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+		// Create the adapter that will return a fragment for each of the three primary sections
+		// of the app.
+		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -173,12 +172,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * sections of the app.
      */
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+		private FridgeFragment fridge = null;
+		private RecipesFragment recipes = null;
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
-		private FridgeFragment fridge = null;
-		private RecipesFragment recipes = null;
 
         @Override
         public Fragment getItem(int i) {
@@ -215,15 +214,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		public static boolean fridgeListChanged = true; // prevent refreshing recipes when we don't need to
     	private FridgeItemAdapter adapter;
     	public FoodSQLiteHelper dataSource; // for convenience
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
         	setHasOptionsMenu(true);
-        	
-        	dataSource = MainActivity.dataSource;
+
+			dataSource = MainActivity.dataSource;
 			fridgeList = dataSource.getAllFoods();
 			fridgeListChanged = true;
-        	
+
         	OnClickListener itemClickListener = new OnClickListener() {
 				@Override
 				public void onClick(View v) { // deletion handling
@@ -239,6 +239,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				}};
 			adapter = new FridgeItemAdapter(getActivity(), fridgeList, itemClickListener, R.drawable.x);
             View rootView = inflater.inflate(R.layout.fragment_section_fridge, container, false);
+
             return rootView;
         }
 
@@ -382,10 +383,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
 				recipeTitle.setText(leftRecipes.get(i).title);
 				recipeDescription.setText(leftRecipes.get(i).description);
-				if(leftRecipes.get(i).image > 0)
+				if(leftRecipes.get(i).imageUrl != null)
+					imageLoader.displayImage(leftRecipes.get(i).imageUrl, recipeImage, (DisplayImageOptions) null);
+				else if(leftRecipes.get(i).image > 0)
 					recipeImage.setImageResource(leftRecipes.get(i).image);
 				else
-					recipeImage.setImageBitmap(leftRecipes.get(i).imageBitmap);
+					recipeImage.setImageResource(R.drawable.chef_hat);
 				cView.setLayoutParams(cardSpacing);
 				cView.setId(i);
 				cView.setOnClickListener(this);
@@ -398,10 +401,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
 				recipeTitle.setText(rightRecipes.get(i).title);
 				recipeDescription.setText(rightRecipes.get(i).description);
-				if(rightRecipes.get(i).image > 0)
+
+				if(rightRecipes.get(i).imageUrl != null)
+					imageLoader.displayImage(rightRecipes.get(i).imageUrl, recipeImage, (DisplayImageOptions)null);
+				else if(rightRecipes.get(i).image > 0)
 					recipeImage.setImageResource(rightRecipes.get(i).image);
 				else
-					recipeImage.setImageBitmap(rightRecipes.get(i).imageBitmap);
+					recipeImage.setImageResource(R.drawable.chef_hat);
 				cView.setLayoutParams(cardSpacing);
 				cView.setId(i + leftRecipes.size());
 				cView.setOnClickListener(this);
@@ -426,7 +432,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				else rightRecipes.add(recipe);
 				side = !side;
 			}
-
 
 			refreshListView();
 		}

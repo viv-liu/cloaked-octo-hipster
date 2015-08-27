@@ -107,10 +107,12 @@ public class RecipesLookupTask extends AsyncTask<List<Integer>, String, String>{
 
 				// apparently this happens in the main thread so find images in separate thread
 				// and very inefficiently re-draw the recipes view when each image is loaded -.-
-				ImageLookupTask requestTask = new ImageLookupTask();
+				/*ImageLookupTask requestTask = new ImageLookupTask();
 				requestTask.host = host;
 				requestTask.recipe = recipe;
-				requestTask.execute(recipeImage);
+				requestTask.execute(recipeImage);*/
+
+				recipe.imageUrl = recipeImage;
 
 				recipes.add(recipe);
 			}

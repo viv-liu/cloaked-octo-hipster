@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item>
+	    <shape>
+	        <solid android:color="#FFF" />
+	        <padding
+	            android:bottom="10dp" />
+	    </shape>
+	</item>
+</layer-list><!-- From: file:/C:/Users/chester/StudioProjects/cloaked-octo-hipster/app/src/main/res/drawable/rounded_corners_background.xml -->

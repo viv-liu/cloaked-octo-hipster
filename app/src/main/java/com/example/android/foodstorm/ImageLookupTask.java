@@ -1,6 +1,8 @@
 /* Ultimate class clutter - have a whole new class just
  * to retrieve images from the web and make them android bitmaps
-  * ugh, why is this not built in somehow*/
+  * ugh, why is this not built in somehow
+  *
+  * no longer used */
 package com.example.android.foodstorm;
 
 import android.graphics.Bitmap;
@@ -44,7 +46,7 @@ public class ImageLookupTask extends AsyncTask<String, String, Bitmap>{
 			recipe.image = R.drawable.chef_hat;
 			return;
 		}
-		recipe.imageBitmap = result;
+		//recipe.imageBitmap = result;
 		recipe.image = -1;
 		host.refreshListView();
 	}

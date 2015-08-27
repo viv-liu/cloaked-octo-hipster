@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:adjustViewBounds="true"/>
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Large Text"
+            android:layout_gravity="bottom"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/white"
+            android:background="@drawable/black_gradient_overlay"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </FrameLayout>
+    <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+</LinearLayout>
+</ScrollView><!-- From: file:/C:/Users/chester/StudioProjects/cloaked-octo-hipster/app/src/main/res/layout/fragment_recipe_intro.xml -->

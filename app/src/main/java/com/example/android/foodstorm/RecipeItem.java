@@ -16,7 +16,8 @@ public class RecipeItem {
 	public String title;
 	public String description;
 	public int image;               // preferred over imageDrawable (used for testing)
-	public Bitmap imageBitmap;         // more convenient for getting images off web
+	//public Bitmap imageBitmap;         // more convenient for getting images off web
+	public String imageUrl;
 	List<String> directions;
 	List<FoodItem> ingredients;
 	public int id;
@@ -25,7 +26,7 @@ public class RecipeItem {
 		title = t;
 		description = desc;
 		image = -1;
-		imageBitmap = null;
+		imageUrl = null;
 		directions = new ArrayList<String>();
 		directions.add("Find apples.");
 		directions.add("Eat apples.");
@@ -38,7 +39,7 @@ public class RecipeItem {
 		title = t;
 		description = desc;
 		image = i;
-		imageBitmap = null;
+		imageUrl = null;
 		directions = d;
 		ingredients = ing;
 	}

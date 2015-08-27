@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/rounded_corners_background" >   
+    
+    <ImageView
+        android:id="@+id/recipe_card_image"
+        android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:adjustViewBounds="true" />
+    
+	<TextView
+	    android:id="@+id/recipe_card_title"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+		android:paddingTop="10dp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+	    android:textSize="16sp" />
+	
+	<TextView
+	    android:id="@+id/recipe_card_description"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textSize="12sp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+	    android:textColor="#999" />
+</LinearLayout>
+<!-- From: file:/C:/Users/chester/StudioProjects/cloaked-octo-hipster/app/src/main/res/layout/recipe_card_layout.xml -->
