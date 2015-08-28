@@ -15,10 +15,10 @@ import android.widget.ArrayAdapter;
 
 public class DirectionCardAdapter extends BaseAdapter {
 	
-	private List<String> directions;
+	private List<RecipeDirection> directions;
 	private final Context context;
 	
-	public DirectionCardAdapter(Context context, List<String> d){
+	public DirectionCardAdapter(Context context, List<RecipeDirection> d){
 		this.context = context;
 		this.directions = d;
 	}
@@ -52,12 +52,11 @@ public class DirectionCardAdapter extends BaseAdapter {
 			LinearLayout ingredientList = (LinearLayout) cView.findViewById(R.id.ingredient_list);
 			((LinearLayout.LayoutParams) ingredientList.getLayoutParams()).bottomMargin = -50;
 
-			TextView tv = new TextView(context);
-			tv.setText("Potatoes");
-			TextView tv1 = new TextView(context);
-			tv1.setText("Bean");
-			ingredientList.addView(tv);
-			ingredientList.addView(tv1);
+			for(FoodItem ingredient : directions.get(idx).ingredients){
+				TextView tv = new TextView(context);
+				tv.setText(ingredient.name);
+				ingredientList.addView(tv);
+			}
 
 			ingredientList.setVisibility(View.GONE);
 
@@ -70,7 +69,7 @@ public class DirectionCardAdapter extends BaseAdapter {
 			cView.setLayoutParams(cardLayoutParams);
 		}*/
 		holder.directionIndex.setText(String.valueOf(idx + 1));
-		holder.directionDescription.setText(directions.get(idx));
+		holder.directionDescription.setText(directions.get(idx).direction);
 		return cView;
 	}
 }

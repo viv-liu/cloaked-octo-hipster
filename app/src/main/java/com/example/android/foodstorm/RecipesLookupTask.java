@@ -60,6 +60,13 @@ public class RecipesLookupTask extends AsyncTask<List<Integer>, String, String>{
 			host.updateListView(recipes);
 			return;
 		}
+
+		/* Recipes come back serialized in string format,
+		   designed to make parsing via split() easy.
+		   basically, it's:
+		   recipe<another recipe>recipe...
+		   each field has an associated end tag
+		 */
 		recipeStrings = result.split("<another_recipe>");
 		for(int i = 0;i < recipeStrings.length;i++) {
 			if(recipeStrings[i].length() > 0){
@@ -78,12 +85,36 @@ public class RecipesLookupTask extends AsyncTask<List<Integer>, String, String>{
 				recipe.id = recipeId;
 				recipe.image = R.drawable.chef_hat;
 
-				recipe.directions = new ArrayList<String>();
+				/* each recipe has a list of directions, in similar format
+				   to the recipes list but with <end_instruction> to end the list,
+				   and <another_instruction> as the delimiter
+				 */
+				recipe.directions = new ArrayList<RecipeDirection>();
 				temp = temp[1].split("<end_instructions>");
 				if(temp.length < 2) continue; // must have ingredients after this
 				String[] directions_arr = temp[0].split("<another_instruction>");
 				for(String direction : directions_arr){
-					if(direction.length() > 0) recipe.directions.add(direction);
+					RecipeDirection dr = new RecipeDirection();
+					String[] direction_arr = direction.split("<instr_ingredients>");
+					if(direction_arr[0].length() == 0) continue;  // not even worth adding if there's no text
+					dr.direction = direction_arr[0];
+					// process associated ingredients, if there are any
+					// these are a list in format name:quantity:unit, delimited by commas
+					if(direction_arr.length >= 2) {
+						String[] direction_ingredient_arr = direction_arr[1].split(",");
+						for (String direction_ingredient : direction_ingredient_arr) {
+							String[] direction_ingredient_desc = direction_ingredient.split(":");
+							if (direction_ingredient_desc[0].length() > 0) {
+								dr.ingredients.add(new FoodItem(direction_ingredient_desc[0],
+										FoodGroup.PRODUCE,
+										R.drawable.chef_hat,
+										false,
+										Float.parseFloat(direction_ingredient_desc[1]),
+										direction_ingredient_desc[2]));
+							}
+						}
+					}
+					recipe.directions.add(dr);
 				}
 
 				// all that's left in temp[1] now should be ingredients
@@ -112,6 +143,7 @@ public class RecipesLookupTask extends AsyncTask<List<Integer>, String, String>{
 				requestTask.recipe = recipe;
 				requestTask.execute(recipeImage);*/
 
+				// set image url, and use third party image loader
 				recipe.imageUrl = recipeImage;
 
 				recipes.add(recipe);
