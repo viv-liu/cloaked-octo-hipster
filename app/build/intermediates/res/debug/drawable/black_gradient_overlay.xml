@@ -2,4 +2,4 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient android:startColor="#EF000000"
         android:endColor="#00000000" android:angle="90" />
-</shape><!-- From: file:/C:/Users/chester/StudioProjects/cloaked-octo-hipster/app/src/main/res/drawable/black_gradient_overlay.xml -->
+</shape><!-- From: file:/C:/Users/Vivian/Documents/AndroidstudioProjects/cloaked-octo-hipster/app/src/main/res/drawable/black_gradient_overlay.xml -->

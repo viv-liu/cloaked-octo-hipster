@@ -6,9 +6,12 @@ import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
 import android.widget.TextView;
 import java.util.List;
 import android.content.Context;
+import java.util.ArrayList;
+import android.widget.ArrayAdapter;
 
 public class DirectionCardAdapter extends BaseAdapter {
 	
@@ -45,6 +48,19 @@ public class DirectionCardAdapter extends BaseAdapter {
 			holder = new DirectionViewHolder();
 			holder.directionIndex = (TextView) cView.findViewById(R.id.direction_card_index);
 			holder.directionDescription = (TextView) cView.findViewById(R.id.direction_card_description);
+
+			LinearLayout ingredientList = (LinearLayout) cView.findViewById(R.id.ingredient_list);
+			((LinearLayout.LayoutParams) ingredientList.getLayoutParams()).bottomMargin = -50;
+
+			TextView tv = new TextView(context);
+			tv.setText("Potatoes");
+			TextView tv1 = new TextView(context);
+			tv1.setText("Bean");
+			ingredientList.addView(tv);
+			ingredientList.addView(tv1);
+
+			ingredientList.setVisibility(View.GONE);
+
 			holder.directionId = idx;
 			cView.setTag(holder);
 		}

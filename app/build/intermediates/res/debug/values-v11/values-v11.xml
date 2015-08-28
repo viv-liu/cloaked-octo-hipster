@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/C:/Users/chester/StudioProjects/cloaked-octo-hipster/app/build/intermediates/exploded-aar/com.journeyapps/zxing-android-embedded/3.0.1/res/values-v11/values.xml -->
+    <!-- From: file:/C:/Users/Vivian/Documents/AndroidstudioProjects/cloaked-octo-hipster/app/build/intermediates/exploded-aar/com.journeyapps/zxing-android-embedded/3.0.1/res/values-v11/values.xml -->
     <eat-comment/>
     <style name="zxing_CaptureTheme" parent="android:Theme.Holo.NoActionBar.Fullscreen">
   </style>

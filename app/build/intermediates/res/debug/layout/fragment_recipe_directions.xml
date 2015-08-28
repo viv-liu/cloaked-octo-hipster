@@ -35,4 +35,4 @@
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical" />
 </LinearLayout>
-</com.example.android.foodstorm.ObservableScrollView><!-- From: file:/C:/Users/chester/StudioProjects/cloaked-octo-hipster/app/src/main/res/layout/fragment_recipe_directions.xml -->
+</com.example.android.foodstorm.ObservableScrollView><!-- From: file:/C:/Users/Vivian/Documents/AndroidstudioProjects/cloaked-octo-hipster/app/src/main/res/layout/fragment_recipe_directions.xml -->

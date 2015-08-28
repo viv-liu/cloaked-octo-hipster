@@ -11,15 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.picasso.Picasso;
 
 public class RecipeIntroFragment extends Fragment {
 	private TextView tv_title;
 	private ImageView iv_foodPic;
 	private TextView tv_description;
-	private ImageLoader imageLoader;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,9 +25,6 @@ public class RecipeIntroFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View rootView = inflater.inflate(R.layout.fragment_recipe_intro, container, false);
-
-		imageLoader = ImageLoader.getInstance();
-		imageLoader.init(ImageLoaderConfiguration.createDefault(getActivity()));
     	
     	tv_title = (TextView) rootView.findViewById(R.id.textView1);
     	tv_title.setText(RecipeFragmentAdapter.RECIPE.title);
@@ -38,11 +32,10 @@ public class RecipeIntroFragment extends Fragment {
 		iv_foodPic = (ImageView) rootView.findViewById(R.id.imageView1);
 		if(RecipeFragmentAdapter.RECIPE.imageUrl != null)
 			//iv_foodPic.setImageBitmap(RecipeFragmentAdapter.RECIPE.imageBitmap);
-			imageLoader.displayImage(RecipeFragmentAdapter.RECIPE.imageUrl, iv_foodPic, (DisplayImageOptions)null);
-		if(RecipeFragmentAdapter.RECIPE.image > 0)
-			iv_foodPic.setImageResource(RecipeFragmentAdapter.RECIPE.image);
-		else
-			iv_foodPic.setImageResource(R.drawable.chef_hat);
+            Picasso.with(this.getActivity())
+                    .load(RecipeFragmentAdapter.RECIPE.imageUrl)
+                    .error(R.drawable.chef_hat)
+                    .into(iv_foodPic);
 		
 		tv_description = (TextView) rootView.findViewById(R.id.textView2);
 		tv_description.setText(RecipeFragmentAdapter.RECIPE.description);

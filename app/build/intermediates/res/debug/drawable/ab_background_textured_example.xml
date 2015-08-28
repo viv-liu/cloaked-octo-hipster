@@ -18,4 +18,4 @@
 
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
     android:src="@drawable/ab_texture_tile_example"
-    android:tileMode="repeat" /><!-- From: file:/C:/Users/chester/StudioProjects/cloaked-octo-hipster/app/src/main/res/drawable/ab_background_textured_example.xml -->
+    android:tileMode="repeat" /><!-- From: file:/C:/Users/Vivian/Documents/AndroidstudioProjects/cloaked-octo-hipster/app/src/main/res/drawable/ab_background_textured_example.xml -->

@@ -46,9 +46,7 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -74,15 +72,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      */
     ViewPager mViewPager;
 	public static FoodSQLiteHelper dataSource;
-	public static ImageLoader imageLoader = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 		dataSource = new FoodSQLiteHelper(this);
-		imageLoader = ImageLoader.getInstance();
-		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 
 		// Create the adapter that will return a fragment for each of the three primary sections
 		// of the app.
@@ -383,12 +378,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				ImageView recipeImage = (ImageView) cView.findViewById(R.id.recipe_card_image);
 				recipeTitle.setText(leftRecipes.get(i).title);
 				recipeDescription.setText(leftRecipes.get(i).description);
+
 				if(leftRecipes.get(i).imageUrl != null)
-					imageLoader.displayImage(leftRecipes.get(i).imageUrl, recipeImage, (DisplayImageOptions) null);
+					Picasso.with(this.getActivity())
+                            .load(leftRecipes.get(i).imageUrl)
+                            .error(R.drawable.chef_hat)
+                            .into(recipeImage);
 				else if(leftRecipes.get(i).image > 0)
 					recipeImage.setImageResource(leftRecipes.get(i).image);
-				else
-					recipeImage.setImageResource(R.drawable.chef_hat);
 				cView.setLayoutParams(cardSpacing);
 				cView.setId(i);
 				cView.setOnClickListener(this);
@@ -403,7 +400,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				recipeDescription.setText(rightRecipes.get(i).description);
 
 				if(rightRecipes.get(i).imageUrl != null)
-					imageLoader.displayImage(rightRecipes.get(i).imageUrl, recipeImage, (DisplayImageOptions)null);
+                    Picasso.with(this.getActivity())
+                            .load(rightRecipes.get(i).imageUrl)
+                            .error(R.drawable.chef_hat)
+                            .into(recipeImage);
 				else if(rightRecipes.get(i).image > 0)
 					recipeImage.setImageResource(rightRecipes.get(i).image);
 				else

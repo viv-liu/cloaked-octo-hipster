@@ -126,6 +126,13 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 		DirectionViewHolder holder = (DirectionViewHolder)v.getTag();
 		selectedDirectionIndex = holder.directionId;
 		highlightDirection(selectedDirectionIndex);
+		View ingredientList = v.findViewById(R.id.ingredient_list);
+
+		// Creating the expand animation for the item
+		ExpandAnimation expandAni = new ExpandAnimation(ingredientList, 500);
+
+		// Start the animation on the toolbar
+		ingredientList.startAnimation(expandAni);
 	}
 
 	/* Hooks onto scroll view, updating the currently selected direction
