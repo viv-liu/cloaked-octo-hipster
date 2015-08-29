@@ -23,7 +23,7 @@ public class RecipeItem {
 	List<RecipeDirection> directions;
 	List<FoodItem> ingredients;
 	public int id;
-
+	
 	public RecipeItem(String t, String desc){
 		title = t;
 		description = desc;
@@ -34,7 +34,7 @@ public class RecipeItem {
 		directions = new ArrayList<RecipeDirection>();
 		ingredients = new ArrayList<FoodItem>();
 	}
-
+	
 	public RecipeItem(String t, String desc, int i, int m, int dif, List<RecipeDirection> dir, List<FoodItem> ing) {
 		title = t;
 		description = desc;

@@ -17,16 +17,18 @@
                 android:layout_gravity="center"
 
                 android:adjustViewBounds="true"/>
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/black_gradient_overlay"
+                android:orientation="horizontal"
                 android:layout_gravity="bottom">
                 <TextView
                     android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Large Text"
+                    android:layout_weight="4"
+                    android:text="Lots of 2 line recipe name"
                     android:layout_gravity="bottom"
                     android:paddingLeft="10dp"
                     android:paddingTop="5dp"
@@ -36,13 +38,15 @@
                     android:textSize="45dp" />
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical|bottom"
                     android:id="@+id/relativeLayout"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="14dp">
+                    android:layout_marginRight="14dp"
+                    android:layout_marginBottom="10dp">
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="wrap_content"
@@ -55,14 +59,17 @@
                         android:layout_height="wrap_content"
                         android:text="100"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:padding="5dp"
                         android:id="@+id/textView"
                         android:layout_centerVertical="true"
+                        android:textColor="#fefeff"
                         android:layout_toRightOf="@+id/imageView"
-                        android:textColor="#fefeff" />
+                        android:layout_alignParentRight="true"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="0dp"
+                        android:textSize="15sp" />
                 </RelativeLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
         </FrameLayout>
 
         <LinearLayout
@@ -81,14 +88,16 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="45 min"
-                    android:id="@+id/textView3"
-                    android:textColor="#fdfdfe" />
+                    android:id="@+id/tv_cooktime"
+                    android:textColor="#fdfdfe"
+                    android:layout_marginTop="5dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="cook time"
-                    android:textColor="#7d7d7e"/>
+                    android:textColor="#7d7d7e"
+                    android:layout_marginBottom="5dp" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
@@ -102,14 +111,16 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Intermediate"
-                    android:id="@+id/textView4"
-                    android:textColor="#ffffff" />
+                    android:id="@+id/tv_difficulty"
+                    android:textColor="#ffffff"
+                    android:layout_marginTop="5dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="difficulty"
-                    android:textColor="#7d7d7e" />
+                    android:textColor="#7d7d7e"
+                    android:layout_marginBottom="5dp" />
             </LinearLayout>
         </LinearLayout>
         <TextView

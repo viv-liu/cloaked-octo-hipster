@@ -33,8 +33,6 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 	private Switch noTouchSwitch;
 	private TextView debugTextView;
 
-	public Boolean animationFinished = true;
-
 	/* onCreateView:
 	   - init class view variables
 	   - init proximity sensor
@@ -130,12 +128,8 @@ public class RecipeDirectionsFragment extends Fragment implements SensorEventLis
 		highlightDirection(selectedDirectionIndex);
 		View ingredientList = v.findViewById(R.id.ingredient_list);
 
-		if(! animationFinished) return;
-
 		// Creating the expand animation for the item
-		animationFinished = false;
 		ExpandAnimation expandAni = new ExpandAnimation(ingredientList, 500);
-		expandAni.host = this;
 
 		// Start the animation on the toolbar
 		ingredientList.startAnimation(expandAni);

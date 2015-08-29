@@ -12,7 +12,6 @@ import android.widget.LinearLayout.LayoutParams;
  *
  */
 public class ExpandAnimation extends Animation {
-    public RecipeDirectionsFragment host = null; // don't look at me
     private View mAnimatedView;
     private LayoutParams mViewLayoutParams;
     private int mMarginStart, mMarginEnd;
@@ -25,6 +24,7 @@ public class ExpandAnimation extends Animation {
      * @param duration The duration of the animation, in ms
      */
     public ExpandAnimation(View view, int duration) {
+
         setDuration(duration);
         mAnimatedView = view;
         mViewLayoutParams = (LayoutParams) view.getLayoutParams();
@@ -60,7 +60,6 @@ public class ExpandAnimation extends Animation {
                 mAnimatedView.setVisibility(View.GONE);
             }
             mWasEndedAlready = true;
-            if(host != null) host.animationFinished = true;
         }
     }
 }

@@ -85,14 +85,6 @@ public class RecipesLookupTask extends AsyncTask<List<Integer>, String, String>{
 				recipe.id = recipeId;
 				recipe.image = R.drawable.chef_hat;
 
-				temp = temp[1].split("<end_time>");
-				if(temp.length < 2) continue;
-				recipe.minutes = Integer.parseInt(temp[0]);
-
-				temp = temp[1].split("<end_difficulty>");
-				if(temp.length < 2) continue;
-				recipe.difficulty = Integer.parseInt(temp[0]);
-
 				/* each recipe has a list of directions, in similar format
 				   to the recipes list but with <end_instruction> to end the list,
 				   and <another_instruction> as the delimiter
