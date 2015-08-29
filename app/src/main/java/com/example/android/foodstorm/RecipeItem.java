@@ -18,6 +18,8 @@ public class RecipeItem {
 	public int image;               // preferred over imageDrawable (used for testing)
 	//public Bitmap imageBitmap;         // more convenient for getting images off web
 	public String imageUrl;
+	public int minutes;
+	public int difficulty;
 	List<RecipeDirection> directions;
 	List<FoodItem> ingredients;
 	public int id;
@@ -27,15 +29,20 @@ public class RecipeItem {
 		description = desc;
 		image = -1;
 		imageUrl = null;
+		minutes = 1;
+		difficulty = 0;
 		directions = new ArrayList<RecipeDirection>();
+		ingredients = new ArrayList<FoodItem>();
 	}
 	
-	public RecipeItem(String t, String desc, int i, List<RecipeDirection> d, List<FoodItem> ing) {
+	public RecipeItem(String t, String desc, int i, int m, int dif, List<RecipeDirection> dir, List<FoodItem> ing) {
 		title = t;
 		description = desc;
 		image = i;
 		imageUrl = null;
-		directions = d;
+		minutes = m;
+		difficulty = dif;
+		directions = dir;
 		ingredients = ing;
 	}
 }

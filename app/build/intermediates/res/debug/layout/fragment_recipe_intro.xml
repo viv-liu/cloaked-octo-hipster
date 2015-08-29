@@ -1,39 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<LinearLayout
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-    <FrameLayout
+    android:clickable="false">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/imageView1"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
 
-            android:adjustViewBounds="true"/>
-        <TextView
-            android:id="@+id/textView1"
+                android:adjustViewBounds="true"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/black_gradient_overlay"
+                android:layout_gravity="bottom">
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Large Text"
+                    android:layout_gravity="bottom"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="@color/white"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="45dp" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:id="@+id/relativeLayout"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="14dp">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/heart_icon"
+                        android:scaleType="centerInside"
+                        android:id="@+id/imageView"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:padding="5dp"
+                        android:id="@+id/textView"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/imageView"
+                        android:textColor="#fefeff" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+        </FrameLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Large Text"
-            android:layout_gravity="bottom"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/white"
-            android:background="@drawable/black_gradient_overlay"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </FrameLayout>
-    <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-</LinearLayout>
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:background="@android:color/background_dark">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="45 min"
+                    android:id="@+id/textView3"
+                    android:textColor="#fdfdfe" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="cook time"
+                    android:textColor="#7d7d7e"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:background="@android:color/background_dark">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Intermediate"
+                    android:id="@+id/textView4"
+                    android:textColor="#ffffff" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="difficulty"
+                    android:textColor="#7d7d7e" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
 </ScrollView><!-- From: file:/C:/Users/Vivian/Documents/AndroidstudioProjects/cloaked-octo-hipster/app/src/main/res/layout/fragment_recipe_intro.xml -->

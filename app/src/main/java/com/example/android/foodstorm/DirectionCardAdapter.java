@@ -46,7 +46,8 @@ public class DirectionCardAdapter extends BaseAdapter {
 		else {
 			cView = LayoutInflater.from(context).inflate(R.layout.direction_card_layout, parent, false);
 			holder = new DirectionViewHolder();
-			holder.directionIndex = (TextView) cView.findViewById(R.id.direction_card_index);
+			holder.
+					directionIndex = (TextView) cView.findViewById(R.id.direction_card_index);
 			holder.directionDescription = (TextView) cView.findViewById(R.id.direction_card_description);
 
 			LinearLayout ingredientList = (LinearLayout) cView.findViewById(R.id.ingredient_list);

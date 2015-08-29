@@ -17,16 +17,16 @@ public final class R {
 	}
 	public static final class id {
 		public static final int zxing_back_button = 0x7f0a0002;
-		public static final int zxing_barcode_scanner = 0x7f0a0038;
-		public static final int zxing_barcode_surface = 0x7f0a0035;
+		public static final int zxing_barcode_scanner = 0x7f0a003d;
+		public static final int zxing_barcode_surface = 0x7f0a003a;
 		public static final int zxing_camera_error = 0x7f0a0003;
 		public static final int zxing_decode = 0x7f0a0004;
 		public static final int zxing_decode_failed = 0x7f0a0005;
 		public static final int zxing_decode_succeeded = 0x7f0a0006;
 		public static final int zxing_possible_result_points = 0x7f0a0007;
 		public static final int zxing_prewiew_size_ready = 0x7f0a0008;
-		public static final int zxing_status_view = 0x7f0a0037;
-		public static final int zxing_viewfinder_view = 0x7f0a0036;
+		public static final int zxing_status_view = 0x7f0a003c;
+		public static final int zxing_viewfinder_view = 0x7f0a003b;
 	}
 	public static final class layout {
 		public static final int zxing_barcode_scanner = 0x7f03000d;
