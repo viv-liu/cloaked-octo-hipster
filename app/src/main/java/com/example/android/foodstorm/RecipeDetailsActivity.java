@@ -24,12 +24,6 @@ public class RecipeDetailsActivity extends FragmentActivity {
 
 	public static RecipeItem RECIPE;
 	
-	private LinearLayout linear_layout;
-	private DirectionCardAdapter directionCardAdapter;
-	private TextView tv_title;
-	private ImageView iv_foodPic;
-	private TableLayout tl_ingredients;
-	
 	RecipeFragmentAdapter mAdapter;
     ViewPager mPager;
     PageIndicator mIndicator;

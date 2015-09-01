@@ -130,5 +130,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/ingredientsHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingredients"
+            android:layout_margin="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TableLayout
+            android:id="@+id/ingredientsTable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0"
+            android:layout_margin="10dp"/>
     </LinearLayout>
 </ScrollView>

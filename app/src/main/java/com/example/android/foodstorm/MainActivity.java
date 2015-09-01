@@ -421,6 +421,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		 */
 		public void updateListView(List<RecipeItem> items){
 			boolean side = true;
+			if(leftRecipes == null || rightRecipes == null) return;
 			leftRecipes.clear();
 			rightRecipes.clear();
 			/* for now, assign an equal number of recipes to
