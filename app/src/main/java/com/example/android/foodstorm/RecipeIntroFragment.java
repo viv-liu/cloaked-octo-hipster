@@ -69,18 +69,18 @@ public class RecipeIntroFragment extends Fragment {
 
     private void fillIngredientsTable(TableLayout table, List<FoodItem> sortedIngredients) {
 
-        TableRow row;
+        LinearLayout row;
         TextView tv1, tv2;
         //Converting to dip unit
         int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 (float) 1, getResources().getDisplayMetrics());
 
         for (int i = 0; i < sortedIngredients.size(); i++) {
-            row = new TableRow(this.getActivity());
+            row = new LinearLayout(this.getActivity());
 
             // TODO: not sure if these params do anything noticeable
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
-            params.setMargins(20*dip, 1, 20*dip, 1);
+            params.setMargins(20 * dip, 1, 20 * dip, 1);
             row.setLayoutParams(params);
 
             if(i%2 == 0) {
@@ -88,7 +88,7 @@ public class RecipeIntroFragment extends Fragment {
             } else {
                 row.setBackgroundColor(Color.LTGRAY);
             }
-            tv1 = new TextView(this.getActivity()); // instruction
+            tv1 = new TextView(this.getActivity()); // ingredient name
             tv2 = new TextView(this.getActivity()); // quantity, unit
 
             tv1.setText(sortedIngredients.get(i).name);
@@ -101,8 +101,20 @@ public class RecipeIntroFragment extends Fragment {
             tv1.setTextSize(15);
             tv2.setTextSize(15);
 
-            tv1.setPadding(10*dip, 10*dip, 10*dip, 10*dip);
-            tv2.setPadding(10*dip, 10*dip, 20*dip, 10*dip);
+            tv1.setPadding(0 * dip, 10 * dip, 0 * dip, 10 * dip); // ingredient name
+            tv2.setPadding(0*dip, 10*dip, 10*dip, 10*dip); // quantity, unit
+
+            // Assign layout gravities to give units some fixed space
+            ViewGroup.LayoutParams rowLayoutParams = row.getLayoutParams();
+            LinearLayout.LayoutParams tv1LayoutParams = new LinearLayout.LayoutParams(rowLayoutParams);
+            tv1LayoutParams.gravity = Gravity.LEFT;
+            tv1LayoutParams.weight = 9;
+            tv1.setLayoutParams(tv1LayoutParams);
+
+            LinearLayout.LayoutParams tv2LayoutParams = new LinearLayout.LayoutParams(rowLayoutParams);
+            tv2LayoutParams.gravity = Gravity.LEFT;
+            tv2LayoutParams.weight = 1;
+            tv2.setLayoutParams(tv2LayoutParams);
 
             row.addView(tv1);
             row.addView(tv2);
@@ -112,5 +124,4 @@ public class RecipeIntroFragment extends Fragment {
 
         }
     }
-
 }
