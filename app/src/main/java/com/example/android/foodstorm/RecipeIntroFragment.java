@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -69,59 +70,94 @@ public class RecipeIntroFragment extends Fragment {
 
     private void fillIngredientsTable(TableLayout table, List<FoodItem> sortedIngredients) {
 
-        LinearLayout row;
-        TextView tv1, tv2;
-        //Converting to dip unit
+        TableRow row;
+        TextView ingredient_tv, quantity_tv;
+
+        // For converting values to dip units
         int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 (float) 1, getResources().getDisplayMetrics());
 
         for (int i = 0; i < sortedIngredients.size(); i++) {
-            row = new LinearLayout(this.getActivity());
+            row = new TableRow(this.getActivity());
 
-            // TODO: not sure if these params do anything noticeable
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
-            params.setMargins(20 * dip, 1, 20 * dip, 1);
-            row.setLayoutParams(params);
-
+            // Give rows alternating background colors
             if(i%2 == 0) {
                 //row.setBackgroundColor(Color.LTGRAY);
             } else {
                 row.setBackgroundColor(Color.LTGRAY);
             }
-            tv1 = new TextView(this.getActivity()); // ingredient name
-            tv2 = new TextView(this.getActivity()); // quantity, unit
 
-            tv1.setText(sortedIngredients.get(i).name);
-            tv2.setText(String.valueOf(sortedIngredients.get(i).quantity) + " "
+            ingredient_tv = new TextView(this.getActivity()); // ingredient name
+            quantity_tv = new TextView(this.getActivity()); // quantity, unit
+
+            IngredientTextViewTag textInfo = new IngredientTextViewTag();
+            textInfo.parentRow = row;
+            textInfo.fullText = sortedIngredients.get(i).name;
+            textInfo.truncatedText = null;
+            textInfo.expanded = false;
+            textInfo.bottomMargin = 5 * dip; // must match padding set later
+
+            // Truncate name if it's too long, so the quantity doesn't get shoved off
+            if(sortedIngredients.get(i).name.length() > 40){
+                String truncatedText = sortedIngredients.get(i).name.substring(0, 40) + "...";
+                ingredient_tv.setText(truncatedText);
+                textInfo.truncatedText = truncatedText;
+                textInfo.fullText = sortedIngredients.get(i).name.substring(0, 40) + "\n" +
+                        sortedIngredients.get(i).name.substring(40);
+            } else
+                ingredient_tv.setText(sortedIngredients.get(i).name);
+
+            quantity_tv.setText(String.valueOf(sortedIngredients.get(i).quantity) + " "
                     + sortedIngredients.get(i).units);
+            
+            ingredient_tv.setTextSize(TypedValue.COMPLEX_UNIT_PT, 6);
+            quantity_tv.setTextSize(TypedValue.COMPLEX_UNIT_PT, 6);
 
-            tv1.setTypeface(null, Typeface.NORMAL);
-            tv2.setTypeface(null, Typeface.NORMAL);
+            // Give rows some top and bottom padding, so they're not so squished
+            // padding order = left, top, right, bottom
+            ingredient_tv.setPadding(0, 5*dip, 0, 5*dip); // ingredient name
+            quantity_tv.setPadding(0, 5*dip, 0, 5*dip); // quantity, unit
 
-            tv1.setTextSize(15);
-            tv2.setTextSize(15);
+            ingredient_tv.setOnClickListener(new IngredientClickListener());
+            ingredient_tv.setTag(textInfo);
 
-            tv1.setPadding(0 * dip, 10 * dip, 0 * dip, 10 * dip); // ingredient name
-            tv2.setPadding(0*dip, 10*dip, 10*dip, 10*dip); // quantity, unit
-
-            // Assign layout gravities to give units some fixed space
-            ViewGroup.LayoutParams rowLayoutParams = row.getLayoutParams();
-            LinearLayout.LayoutParams tv1LayoutParams = new LinearLayout.LayoutParams(rowLayoutParams);
-            tv1LayoutParams.gravity = Gravity.LEFT;
-            tv1LayoutParams.weight = 9;
-            tv1.setLayoutParams(tv1LayoutParams);
-
-            LinearLayout.LayoutParams tv2LayoutParams = new LinearLayout.LayoutParams(rowLayoutParams);
-            tv2LayoutParams.gravity = Gravity.LEFT;
-            tv2LayoutParams.weight = 1;
-            tv2.setLayoutParams(tv2LayoutParams);
-
-            row.addView(tv1);
-            row.addView(tv2);
+            row.addView(ingredient_tv);
+            row.addView(quantity_tv);
 
             table.addView(row, new TableLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                    LayoutParams.WRAP_CONTENT, 20));
 
+        }
+    }
+
+    private class IngredientTextViewTag {
+        public TableRow parentRow;
+        public String truncatedText;
+        public String fullText;
+        public boolean expanded; // used to track animation
+        public int bottomMargin; // aids animation class in figuring out when to stop and which way to go
+    }
+
+    /* Private class for handling ingredient clicks
+       For now, this will only be used for expanding items too
+       long to be shown (without shoving off the quantity display)
+     */
+    private class IngredientClickListener implements View.OnClickListener {
+        public void onClick(View v){
+
+            IngredientTextViewTag textInfo = (IngredientTextViewTag)v.getTag();
+            TextView ingredient_tv = (TextView)v;
+            if(textInfo != null && textInfo.truncatedText != null){
+                if(textInfo.expanded) {
+                    ingredient_tv.setText(textInfo.truncatedText);
+                    textInfo.expanded = false;
+                } else {
+                    ingredient_tv.setText(textInfo.fullText);
+                    textInfo.expanded = true;
+                }
+                ExpandAnimation expandAni = new ExpandAnimation(ingredient_tv, 100, false, textInfo.bottomMargin);
+                ingredient_tv.startAnimation(expandAni);
+            }
         }
     }
 }

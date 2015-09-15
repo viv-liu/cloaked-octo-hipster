@@ -1,5 +1,6 @@
 package com.example.android.foodstorm;
 
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -24,7 +25,6 @@ public class ExpandAnimation extends Animation {
      * @param duration The duration of the animation, in ms
      */
     public ExpandAnimation(View view, int duration) {
-
         setDuration(duration);
         mAnimatedView = view;
         mViewLayoutParams = (LayoutParams) view.getLayoutParams();
@@ -34,6 +34,26 @@ public class ExpandAnimation extends Animation {
 
         mMarginStart = mViewLayoutParams.bottomMargin;
         mMarginEnd = (mMarginStart == 0 ? (0- view.getHeight()) : 0);
+
+        view.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Initialize animation, but choose whether view should always be visible
+     * @param view Layout to animate
+     * @param duration Animation duration
+     * @param hideAfter Whether view should be visible afterwards
+     */
+    public ExpandAnimation(View view, int duration, boolean hideAfter, int startMargin){
+        setDuration(duration);
+        mAnimatedView = view;
+        mViewLayoutParams = (LayoutParams) view.getLayoutParams();
+
+        // decide to show or hide the view
+        mIsVisibleAfter = hideAfter;
+
+        mMarginStart = mViewLayoutParams.bottomMargin;
+        mMarginEnd = (mMarginStart == startMargin ? (startMargin- view.getHeight()) : startMargin);
 
         view.setVisibility(View.VISIBLE);
     }
